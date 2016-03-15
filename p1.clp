@@ -18,7 +18,7 @@ deffacts PersonasFamilia
     (Persona Antonio V)
     (Persona Vivi M)
     (Persona Pepe3 V)
-    (Persona Clauda M)
+    (Persona Claudia M)
     (Persona Martina M)
 )
 (
@@ -42,6 +42,25 @@ deffacts ParentescosFamilia
     (Relacion Vivi Pepe3 casados)
     (Relacion Claudia Silvia hijo)
     (Relacion Martina Antonio hijo)
+)
+(
+deffacts SexoParentescos
+    (Sexo V casados esposo)
+    (Sexo M casados esposa)
+    (Sexo V hijo hijo)
+    (Sexo M hijo hija)
+    (Sexo V primo primo)
+    (Sexo M primo prima)
+    (Sexo V abuelo abuelo)
+    (Sexo M abuelo abuela)
+    (Sexo V tio tio)
+    (Sexo M tio tia)
+    (Sexo V cuniado cuniado)
+    (Sexo M cuniado cuniada)
+    (Sexo V hermano hermano)
+    (Sexo M hermano hermana)
+    (Sexo V suegro suegro)
+    (Sexo M suegro suegra)
 )
 (
 defrule Casados
@@ -136,4 +155,24 @@ defrule CuniadoExt
     (Relacion ?n4 ?n3 casados)
     => (assert (Relacion ?n1 ?n4 cuniado))
     (assert (Relacion ?n4 ?n1 cuniado))
+)
+(
+defrule PidePersonas
+    =>
+    (printout t "Introduce primera persona: ")
+    (bind ?n1 (read))
+    (printout t "Introduce segunda persona: ")
+    (bind ?n2 (read))
+    (assert (Resuelve ?n1 ?n2))
+)
+(
+defrule ResuelveRelacion
+    (Persona ?n1 ?s1)
+    (Persona ?n2 ?s2)
+    (Resuelve ?n1 ?n2)
+    (Relacion ?n1 ?n2 ?relacion)
+    (Sexo ?s1 ?relacion ?rel)
+    =>
+    (printout t ?n1 " es " ?rel " de " ?n2)
+    (printout t "" crlf)
 )
