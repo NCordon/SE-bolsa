@@ -86,7 +86,6 @@ defrule Hermanos
     (Relacion ?n2 ?n1 hijo)
     (Relacion ?n3 ?n1 hijo)
     => (assert (Relacion ?n2 ?n3 hermano))
-    (assert (Relacion ?n3 ?n2 hermano))
 )
 (
 defrule Tio
@@ -123,7 +122,6 @@ defrule Primo
     (Relacion ?n1 ?n2 tio)
     (Relacion ?n3 ?n1 hijo)
     => (assert (Relacion ?n3 ?n2 primo))
-    (assert (Relacion ?n2 ?n3 primo))
 )
 (
 defrule Suegro
@@ -142,7 +140,6 @@ defrule Cuniado
     (Relacion ?n1 ?n2 casados)
     (Relacion ?n2 ?n3 hermano)
     => (assert (Relacion ?n1 ?n3 cuniado))
-    (assert (Relacion ?n3 ?n1 cuniado))
 )
 (
 defrule CuniadoExt
@@ -154,7 +151,6 @@ defrule CuniadoExt
     (Relacion ?n2 ?n3 hermano)
     (Relacion ?n4 ?n3 casados)
     => (assert (Relacion ?n1 ?n4 cuniado))
-    (assert (Relacion ?n4 ?n1 cuniado))
 )
 (
 defrule PidePersonas
@@ -166,7 +162,7 @@ defrule PidePersonas
     (assert (Resuelve ?n1 ?n2))
 )
 (
-defrule ResuelveRelacion
+defrule ExisteRelacion
     (Persona ?n1 ?s1)
     (Persona ?n2 ?s2)
     (Resuelve ?n1 ?n2)
@@ -174,5 +170,15 @@ defrule ResuelveRelacion
     (Sexo ?s1 ?relacion ?rel)
     =>
     (printout t ?n1 " es " ?rel " de " ?n2)
+    (printout t "" crlf)
+)
+(
+defrule NoExisteRelacion
+    (Persona ?n1 ?s1)
+    (Persona ?n2 ?s2)
+    (Resuelve ?n1 ?n2)
+    (not (Relacion ?n1 ?n2 ?relacion))
+    =>
+    (printout t ?n1 " no tiene relación con " ?n2)
     (printout t "" crlf)
 )
