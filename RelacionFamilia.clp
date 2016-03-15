@@ -1,3 +1,9 @@
+;; Ignacio Cordón
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Datos del problema
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 deffacts PersonasFamilia
     (Persona Yolanda M)
@@ -62,6 +68,9 @@ deffacts SexoParentescos
     (Sexo V suegro suegro)
     (Sexo M suegro suegra)
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla que establece reciprocidad entre casados
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule Casados
     (Persona ?n1 ?)
@@ -69,6 +78,10 @@ defrule Casados
     (Relacion ?n1 ?n2 casados)
     => (assert (Relacion ?n2 ?n1 casados))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla que calcula los hijos de una persona a partir
+;; de los de su esposo/a
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule Hijos
     (Persona ?n1 ?)
@@ -78,6 +91,9 @@ defrule Hijos
     (Relacion ?n3 ?n1 hijo)
     => (assert (Relacion ?n3 ?n2 hijo))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla que establece reciprocidad entre hermanos
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule Hermanos
     (Persona ?n1 ?)
@@ -87,6 +103,9 @@ defrule Hermanos
     (Relacion ?n3 ?n1 hijo)
     => (assert (Relacion ?n2 ?n3 hermano))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla para el cálculo de los tíos
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule Tio
     (Persona ?n1 ?)
@@ -96,15 +115,9 @@ defrule Tio
     (Relacion ?n3 ?n2 hijo)
     => (assert (Relacion ?n1 ?n3 tio))
 )
-(
-defrule HerenciaRelaciones
-    (Persona ?n1 ?)
-    (Persona ?n2&~?n1 ?)
-    (Persona ?n3&~?n2&~?n1 ?)
-    (Relacion ?n1 ?n2 casados)
-    (Relacion ?n2 ?n3 ?rel&~hijo&~hermano&~cuniado)
-    => (assert (Relacion ?n1 ?n3 ?rel))
-)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla para el cálculo de los abuelos
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule Abuelo
     (Persona ?n1 ?)
@@ -114,6 +127,10 @@ defrule Abuelo
     (Relacion ?n2 ?n3 hijo)
     => (assert (Relacion ?n3 ?n1 abuelo))
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla para el cálculo de los primos
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule Primo
     (Persona ?n1 ?)
@@ -123,6 +140,9 @@ defrule Primo
     (Relacion ?n3 ?n1 hijo)
     => (assert (Relacion ?n3 ?n2 primo))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla para el cálculo de los suegros
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule Suegro
     (Persona ?n1 ?)
@@ -132,6 +152,9 @@ defrule Suegro
     (Relacion ?n1 ?n3 casados)
     => (assert (Relacion ?n2 ?n3 suegro))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla para el cálculo de los cuniados
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule Cuniado
     (Persona ?n1 ?)
@@ -140,7 +163,11 @@ defrule Cuniado
     (Relacion ?n1 ?n2 casados)
     (Relacion ?n2 ?n3 hermano)
     => (assert (Relacion ?n1 ?n3 cuniado))
+    (assert (Relacion ?n3 ?n1 cuniado))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla para el cálculo de los cuniados políticos
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (
 defrule CuniadoExt
     (Persona ?n1 ?)
@@ -152,6 +179,23 @@ defrule CuniadoExt
     (Relacion ?n4 ?n3 casados)
     => (assert (Relacion ?n1 ?n4 cuniado))
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Regla que duplica ciertas relaciones (tío, abuelo,...)
+;; para esposos/as
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(
+defrule HerenciaRelaciones
+    (Persona ?n1 ?)
+    (Persona ?n2&~?n1 ?)
+    (Persona ?n3&~?n2&~?n1 ?)
+    (Relacion ?n1 ?n2 casados)
+    (Relacion ?n2 ?n3 ?rel&~hijo&~hermano&~cuniado)
+    => (assert (Relacion ?n1 ?n3 ?rel))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (
 defrule PidePersonas
     =>
