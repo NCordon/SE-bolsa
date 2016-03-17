@@ -163,7 +163,6 @@ defrule Cuniado
     (Relacion ?n1 ?n2 casados)
     (Relacion ?n2 ?n3 hermano)
     => (assert (Relacion ?n1 ?n3 cuniado))
-    (assert (Relacion ?n3 ?n1 cuniado))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Regla para el cálculo de los cuniados políticos
