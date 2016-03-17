@@ -203,26 +203,33 @@ defrule PidePersonas
     (bind ?n1 (read))
     (printout t "Introduce segunda persona: ")
     (bind ?n2 (read))
-    (assert (Resuelve ?n1 ?n2))
+    (assert (Resuelve ?n1))
+    (assert (Resuelve ?n2))
 )
 (
 defrule ExisteRelacion
     (Persona ?n1 ?s1)
     (Persona ?n2 ?s2)
-    (Resuelve ?n1 ?n2)
+    ?Borrar1 <- (Resuelve ?n1)
+    ?Borrar2 <- (Resuelve ?n2)
     (Relacion ?n1 ?n2 ?relacion)
     (Sexo ?s1 ?relacion ?rel)
     =>
     (printout t ?n1 " es " ?rel " de " ?n2)
     (printout t "" crlf)
+    (retract ?Borrar1)
+    (retract ?Borrar2)
 )
 (
 defrule NoExisteRelacion
     (Persona ?n1 ?s1)
-    (Persona ?n2 ?s2)
-    (Resuelve ?n1 ?n2)
+    (Persona ?n2&~?n1 ?s2)
+    ?Borrar1 <- (Resuelve ?n1)
+    ?Borrar2 <- (Resuelve ?n2)
     (not (Relacion ?n1 ?n2 ?relacion))
     =>
     (printout t ?n1 " no tiene relación con " ?n2)
     (printout t "" crlf)
+    (retract ?Borrar1)
+    (retract ?Borrar2)
 )
