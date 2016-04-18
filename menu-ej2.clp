@@ -45,6 +45,8 @@ defrule CheckEleccion
 
 (
 defrule EntradaIncorrecta
+    ;;;; Si la entrada del menu escogida no era correcta, lo marcamos e
+    ;;;; imprimimos el menu para corregirla
     ?ClearIncorrecta <- (EntradaIncorrecta ?cod)
     ?ClearCod <- (Elegido ?cod)
     ?ClearMenu <- (ImprimeMenu ?num)
@@ -59,6 +61,8 @@ defrule EntradaIncorrecta
 
 (
 defrule AskForMore
+    ;;;; Caso de que la opcion anterior fuese correcta, preguntamos si queremos
+    ;;;; seguir escogiendo
     (ImprimeMenu ?num)
     =>
     (printout t crlf "¿Quieres seguir escogiendo? (s/n)")
@@ -68,6 +72,7 @@ defrule AskForMore
 
 (
 defrule ProcesaRespuesta
+    ;;;; Si queremos seguir escogiendo, se vuelve a imprimir el menu
     ?ClearGoOn <- (KeepSelecting s)
     (ImprimeMenu ?num)
     =>
