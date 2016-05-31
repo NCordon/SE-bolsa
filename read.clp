@@ -1,6 +1,6 @@
 ;;; Template para valores de las acciones al cierre de mercados
 
-(deftemplate ValorAlCierre
+(deftemplate ValorSociedad
     (field Nombre)
     (field Precio)
     (field Variacion)
@@ -25,7 +25,7 @@
 
 ;;; Template para valores del estado de los sectores
 
-(deftemplate EstadoSector
+(deftemplate ValorSector
     (field Nombre)
     (field Variacion)
     (field Capitalizacion)
@@ -56,7 +56,7 @@
 )
 
 
-(defrule ReadValorAlCierre
+(defrule ReadValorSociedad
     ?f <- (SeguirLeyendoAcciones)
     =>
     (retract ?f)
@@ -83,7 +83,7 @@
         (bind ?VarSemestre (read acciones))
         (bind ?VarAnio (read acciones))
 
-        (assert (ValorAlCierre
+        (assert (ValorSociedad
             (Nombre ?Nombre)
             (Precio ?Precio)
             (Variacion ?Variacion)
@@ -111,14 +111,92 @@
 )
 
 
+;;; Leer los valores de sectores
+
+(defrule OpenSectores
+    (declare (salience 100))
+    =>
+    (open "AnalisisSectores.txt" sectores "r+")
+    (assert (SeguirLeyendoSectores))
+)
+
+;;;
+
+(defrule ReadValorSectores
+    ?f <- (SeguirLeyendoSectores)
+    =>
+    (retract ?f)
+    (bind ?Nombre (read sectores))
+
+    (if (neq ?Nombre EOF) then
+        (bind ?Variacion (read sectores))
+        (bind ?Capitalizacion (read sectores))
+        (bind ?Per (read sectores))
+        (bind ?Rpd (read sectores))
+        (bind ?Tamanio (read sectores))
+        (bind ?VarPrecio5 (read sectores))
+        (bind ?Perdiendo3 (read sectores))
+        (bind ?Perdiendo5 (read sectores))
+        (bind ?VarMes (read sectores))
+        (bind ?VarTrimestre (read sectores))
+        (bind ?VarSemestre (read sectores))
+        (bind ?VarAnio (read sectores))
+
+        (assert (ValorSector
+            (Nombre ?Nombre)
+            (Variacion ?Variacion)
+            (Capitalizacion ?Capitalizacion)
+            (Per ?Per)
+            (Rpd ?Rpd)
+            (Tamanio ?Tamanio)
+            (VarPrecio5 ?VarPrecio5)
+            (Perdiendo3 ?Perdiendo3)
+            (Perdiendo5 ?Perdiendo5)
+            (VarMes ?VarMes)
+            (VarTrimestre ?VarTrimestre)
+            (VarSemestre ?VarSemestre)
+            (VarAnio ?VarAnio)
+        ))
+        (assert (SeguirLeyendoSectores))
+    )
+)
+
 
 ;;; Deducción de valores inestables
 
 (defrule MarcaInestablesConstruccion
-    (ValorAlCierre
+    (ValorSociedad
         (Nombre ?N)
         (Sector Construccion)
     )
+
     =>
+
     (assert (ValorInestable (Nombre ?N)))
+)
+
+(defrule VerdadEconomiaBajando
+    (ValorSector
+        (Nombre Ibex)
+        (Variacion ?Variacion)
+    )
+
+    (test (< ?Variacion 0))
+
+    =>
+
+    (assert (EconomiaBajando))
+)
+
+(defrule MarcaInestablesServicios
+    (ValorSociedad
+        (Nombre ?N)
+        (Sector Servicios)
+    )
+
+    (EconomiaBajando)
+    =>
+
+    (assert (ValorInestable (Nombre ?N)))
+
 )
