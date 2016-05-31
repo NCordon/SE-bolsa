@@ -1,3 +1,5 @@
+;;; Template para valores de las acciones al cierre de mercados
+
 (deftemplate ValorAlCierre
     (field Nombre)
     (field Precio)
@@ -21,17 +23,41 @@
     (field VarAnio)
 )
 
+;;; Template para valores del estado de los sectores
+
+(deftemplate EstadoSector
+    (field Nombre)
+    (field Variacion)
+    (field Capitalizacion)
+    (field Per)
+    (field Rpd)
+    (field Tamanio)
+    (field VarPrecio5)
+    (field Perdiendo3)
+    (field Perdiendo5)
+    (field VarMes)
+    (field VarTrimestre)
+    (field VarSemestre)
+    (field VarAnio)
+)
+
+
+;;; Template para valores inestables
+
+(deftemplate ValorInestable
+    (field Nombre)
+)
 
 (defrule OpenAcciones
     (declare (salience 100))
     =>
     (open "Analisis.txt" acciones "r+")
-    (assert (SeguirLeyendo))
+    (assert (SeguirLeyendoAcciones))
 )
 
 
 (defrule ReadValorAlCierre
-    ?f <- (SeguirLeyendo)
+    ?f <- (SeguirLeyendoAcciones)
     =>
     (retract ?f)
     (bind ?Nombre (read acciones))
@@ -79,7 +105,20 @@
             (VarSemestre ?VarSemestre)
             (VarAnio ?VarAnio)
         ))
-        (assert (SeguirLeyendo))
+        (assert (SeguirLeyendoAcciones))
     )
 
+)
+
+
+
+;;; Deducción de valores inestables
+
+(defrule MarcaInestablesConstruccion
+    (ValorAlCierre
+        (Nombre ?N)
+        (Sector Construccion)
+    )
+    =>
+    (assert (ValorInestable (Nombre ?N)))
 )
