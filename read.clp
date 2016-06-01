@@ -1,4 +1,6 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Template para valores de las acciones al cierre de mercados
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftemplate ValorSociedad
     (field Nombre)
@@ -23,7 +25,9 @@
     (field VarAnio)
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Template para valores del estado de los sectores
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftemplate ValorSector
     (field Nombre)
@@ -41,12 +45,39 @@
     (field VarAnio)
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Template para valores inestables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftemplate ValorInestable
     (field Nombre)
 )
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Template para saldo disponible
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftemplate SaldoDisponible
+    (field MinDisponible)
+    (field MaxDisponible)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Template para valores de la cartera
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(deftemplate ValorCartera
+    (field Nombre)
+    (field Acciones)
+    (field ValorAnterior)
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Lectura de valores al cierre
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule OpenAcciones
     (declare (salience 100))
@@ -110,8 +141,9 @@
 
 )
 
-
-;;; Leer los valores de sectores
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Lectura de valores de sectores
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule OpenSectores
     (declare (salience 100))
@@ -162,7 +194,59 @@
 )
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Lectura de valores de sectores
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule OpenCartera
+    (declare (salience 100))
+    =>
+    (open "Cartera.txt" cartera "r+")
+    (assert (LeerDisponibleCartera))
+)
+
+
+
+(defrule LeerCabeceraCartera
+    ?f <- (LeerDisponibleCartera)
+    =>
+    (retract ?f)
+    (read cartera)
+    (bind ?MinDisponible (read cartera))
+    (bind ?MaxDisponible (read cartera))
+
+    (assert (SaldoDisponible
+        (MinDisponible ?MinDisponible)
+        (MaxDisponible ?MaxDisponible)
+    ))
+    (assert (SeguirLeyendoCartera))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Lectura de cartera de valores
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrule ReadCartera
+    ?f <- (SeguirLeyendoCartera)
+    =>
+    (retract ?f)
+    (bind ?Nombre (read cartera))
+
+    (if (neq ?Nombre EOF) then
+        (bind ?Acciones (read cartera))
+        (bind ?ValorAnterior (read cartera))
+
+        (assert (ValorCartera
+            (Nombre ?Nombre)
+            (Acciones ?Acciones)
+            (ValorAnterior ?ValorAnterior)
+        ))
+        (assert (SeguirLeyendoCartera))
+    )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Deducción de valores inestables
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule MarcaInestablesConstruccion
     (ValorSociedad
