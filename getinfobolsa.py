@@ -9,39 +9,43 @@ import json
 import re
 
 
-# Queremos extraer el id
-# get_locationid = re.compile("[^:]*\:[^:]*$")
-# get_location = re.compile("locationId\"\:[^\}]*")
+def to_float(s):
+    return s.replace(".","").replace(",",".")
 
 
+data = {'name':[], 'price':[], 'var':[], 'capitalizacion:'[],
+        'per':[], 'rdp':[]}
 
-query = "http://www.bolsamadrid.es/esp/aspx/Mercados/Precios.aspx?indice=ESI100000000"
+root = "http://www.bolsamadrid.es"
+
+query = root + "/esp/aspx/Mercados/Precios.aspx?indice=ESI100000000"
 page = html.fromstring(requests.get(query).content)
-
-""" Enlaces a las empresas """
-links = page.xpath('//td[@class="DifFlBj"]//@href') + \
-              page.xpath('//td[@class="DifFlSb"]//@href')
-
-links = ["http://www.bolsamadrid.es" + l for l in links]
-
-""" Nombres de las empresas """
-names = page.xpath('//td[@class="DifFlBj"]//a/text()') + \
-            page.xpath('//td[@class="DifFlSb"]//a/text()')
+rows = page.xpath('//table[@id="ctl00_Contenido_tblAcciones"]//tr')
+# Le quitamos la cabecera
+rows = rows[1:]
 
 
-required = ["Precio cierre período ", "Capitalización ", ""]
+# Extraemos nombre, precio al cierre, variazacion y capitalizacion
+for r in rows:
+    cols = r.getchildren()
 
-datos_empresas = []
+    name = cols[0].xpath('.//a//text()')[0]
+    price = to_float(cols[1].text)
+    var = to_float(cols[2].text)
+    data['name'] += [name]
+    data['price'] += [price]
+    data['var'] += [var]
 
-for i in range(len(names)):
-    page = html.fromstring(requests.get( links[i] ).content)
-    rows = page.xpath('//table[@id="ctl00_Contenido_tblCapital"]//tr')
-    info_name = [ row.getchildren()[0].text for row in rows ]
+    link_deep = root + cols[0].xpath('.//a//@href')[0]
+    link_page = html.fromstring(requests.get(link_deep).content)
+    capitalizacion = link_page.xpath('//table[@id="ctl00_Contenido_tblCapital"]//tr')[1].\
+                     getchildren()[1].text
+    capitalizacion = to_float(capitalizacion)
+    data['capitalizacion'] += [capitalizacion]
 
-    for data_name in required:
-        try:
-            j = info_name.index(data_name)
-            data = rows[j].getchildren()[1].text
-            datos_empresas += [ names[i] + data ]
-        except:
-            pass
+
+    # Histórico de un año, por si es necesario
+    script_grafico = link_page.xpath('//script')[-2].text
+    ancient = root +\
+              re.search('url: "/aspx/comun/consultaPrecios.*"', script_grafico).\
+              group(0).rsplit()[-1].replace("\"","")
