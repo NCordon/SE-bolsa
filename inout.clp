@@ -186,10 +186,10 @@
 (defrule VerdadEconomiaBajando
     (ValorSector
         (Nombre Ibex)
-        (Variacion ?Variacion)
+        (VarSemana ?VarSemana)
     )
 
-    (test (< ?Variacion 0))
+    (test (< ?VarSemana 0))
 
     =>
 

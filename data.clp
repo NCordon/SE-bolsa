@@ -20,6 +20,7 @@
     (field Perdiendo5)
     (field VarSector5)
     (field VarSectorLower-5)
+    (field VarSemana)
     (field VarMes)
     (field VarTrimestre)
     (field VarSemestre)
@@ -37,7 +38,7 @@
     (field Per)
     (field Rpd)
     (field Tamanio)
-    (field VarPrecio5)
+    (field VarSemana)
     (field Perdiendo3)
     (field Perdiendo5)
     (field VarMes)
@@ -80,5 +81,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (deftemplate ValorPeligroso
+    (field Nombre)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Template para valores infravalorado
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(deftemplate ValorInfravalorado
     (field Nombre)
 )

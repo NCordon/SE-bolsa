@@ -11,5 +11,6 @@
     =>
     (load data.clp)
     (load inout.clp)
-    (load dangerous.clp)
+    (load peligrosos.clp)
+    (load infravalorados.clp)
 )
