@@ -135,13 +135,10 @@
     =>
     (retract ?f)
     (read cartera)
-    (bind ?MinDisponible (read cartera))
-    (bind ?MaxDisponible (read cartera))
+    (bind ?Invertible (read cartera))
+    (read cartera)
 
-    (assert (SaldoDisponible
-        (MinDisponible ?MinDisponible)
-        (MaxDisponible ?MaxDisponible)
-    ))
+    (assert (SaldoDisponible (Invertible ?Invertible)))
     (assert (SeguirLeyendoCartera))
 )
 
