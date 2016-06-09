@@ -40,11 +40,21 @@ def tag_rpd(rpd):
     return result
 
 
-def price_falling(data):
+def price_falling(prices):
     losing = True
 
-    for i in range(1,len(data)):
-        if data[i-1]<data[i]:
+    for i in range(1,len(prices)):
+        if prices[i-1] < prices[i]:
+            losing = False
+
+    return losing
+
+
+def price_falling_var(vars):
+    losing = True
+
+    for i in range(1,len(vars)):
+        if vars[i] > 0:
             losing = False
 
     return losing
@@ -91,11 +101,11 @@ datos = OrderedDict([
     ('var_trim', [None]*n),
     ('var_sem', [None]*n),
     ('var_anio', [None]*n),
-    ('precio_1', [None]*n),
-    ('precio_2', [None]*n),
-    ('precio_3', [None]*n),
-    ('precio_4', [None]*n),
-    ('precio_5', [None]*n)]
+    ('var_1', [None]*n),
+    ('var_2', [None]*n),
+    ('var_3', [None]*n),
+    ('var_4', [None]*n),
+    ('var_5', [None]*n)]
 )
 
 data = pd.DataFrame(datos, filas)
@@ -115,6 +125,11 @@ datos = OrderedDict([
     ('var_trim', [None]*n),
     ('var_sem', [None]*n),
     ('var_anio', [None]*n),
+    ('var_1', [None]*n),
+    ('var_2', [None]*n),
+    ('var_3', [None]*n),
+    ('var_4', [None]*n),
+    ('var_5', [None]*n)]
 )
 
 sector_data = pd.DataFrame(datos, filas)
@@ -153,7 +168,7 @@ for r in rows:
                   group(0).rsplit()[-1].replace("\"","")
 
         # Histórico de precios
-        history = json.loads(html.fromstring(requests.get(ancient).content).text)["s0:"][-5:]
+        history = json.loads(html.fromstring(requests.get(ancient).content).text)["s0:"][-6:]
         history = [u['p'] for u in history]
 
         alias = empresas[name]
@@ -168,11 +183,11 @@ for r in rows:
 
         data['losing3'][alias] = price_falling(history[-3:])
         data['losing5'][alias] = price_falling(history)
-        data['precio_1'][alias] = history[0]
-        data['precio_2'][alias] = history[1]
-        data['precio_3'][alias] = history[2]
-        data['precio_4'][alias] = history[3]
-        data['precio_5'][alias] = history[4]
+        data['var_1'][alias] = price_variation(history[5],history[4])
+        data['var_2'][alias] = price_variation(history[4],history[3])
+        data['var_3'][alias] = price_variation(history[3],history[2])
+        data['var_4'][alias] = price_variation(history[2],history[1])
+        data['var_5'][alias] = price_variation(history[1],history[0)]
 
 
 data['size'] = 100*(data['capitalization']/sum(data['capitalization']))
@@ -224,5 +239,45 @@ for p in periodos:
             data[periodos[p]][alias] = var_periodo
 
 
+data['var_sector5'] = data['var5']
 
 """ CÁLCULO DE DATOS DE SECTORES """
+
+for s in sector_data.index.values:
+    current = data[data['sector'] == s]
+    count = len(current)
+    sector_data['var'][s] = sum(current['var'])/count
+    sector_data['capitalization'][s] = sum(current['capitalization'])
+    sector_data['per'][s] = sum(current['per'])/count
+    sector_data['rpd'][s] = sum(current['rpd'])/count
+    sector_data['size'][s] = sum(current['capitalization'])/sum(data['capitalization'])
+    sector_data['var5'][s] = sum(current['var5'])/count
+    sector_data['var_1'][s] = sum(current['var_1'])/count
+    sector_data['var_2'][s] = sum(current['var_2'])/count
+    sector_data['var_3'][s] = sum(current['var_3'])/count
+    sector_data['var_4'][s] = sum(current['var_4'])/count
+    sector_data['var_5'][s] = sum(current['var_5'])/count
+    sector_data['losing3'][s] = price_falling_var([
+        sector_data['var_1'][s],
+        sector_data['var_2'][s],
+        sector_data['var_3'][s],
+    ])
+    sector_data['losing5'][s] = price_falling_var([
+        sector_data['var_1'][s],
+        sector_data['var_2'][s],
+        sector_data['var_3'][s],
+        sector_data['var_4'][s],
+        sector_data['var_5'][s],
+    ])
+    sector_data['var_mes'][s] = sum(current['var_mes'])/count
+    sector_data['var_trim'][s] = sum(current['var_trim'])/count
+    sector_data['var_sem'][s] = sum(current['var_sem'])/count
+    sector_data['var_anio'][s] = sum(current['var_anio'])/count
+
+
+#### Diferencia en variación a 5 días entre una empresa y su sector
+for empresa in data.index.values:
+    var_sector = sector_data['var5'][data['sector'][empresa]]
+    data['var_sector5'][empresa] = data['var5'][empresa] - var_sector
+
+data['var_sector_condition'] = (data['var_sector5']<-5)

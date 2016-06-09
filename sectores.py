@@ -31,7 +31,7 @@ sectores = {
     'INDRA':'Teconologia',
     'MAPFRE':'Bancos',
     'MEDIASET_ESP':'Servicios',
-    'MERLIN_PROP.': 'Bancos',
+    'MERLIN_PROP': 'Bancos',
     'OBR.H.LAIN': 'Construccion',
     'RED_ELE.CORP': 'Energia',
     'REPSOL':'Energia',
