@@ -7,7 +7,7 @@ import requests
 from lxml import html
 import json
 import re
-from alias import empresas
+from empresas import empresas
 from sectores import sectores
 import pandas as pd
 from collections import OrderedDict

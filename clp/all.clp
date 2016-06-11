@@ -9,9 +9,9 @@
 
 (defrule LoadModules
     =>
-    (load data.clp)
+    (load templates.clp)
     (load inout.clp)
     (load peligrosos.clp)
-;;; (load sobrevalorados.clp)
     (load infravalorados.clp)
+;;; (load sobrevalorados.clp)
 )

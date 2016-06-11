@@ -6,7 +6,7 @@
 (defrule OpenAcciones
     (declare (salience 100))
     =>
-    (open "Analisis.txt" acciones "r+")
+    (open "../data/Analisis.txt" acciones "r+")
     (assert (SeguirLeyendoAcciones))
 )
 
@@ -72,7 +72,7 @@
 (defrule OpenSectores
     (declare (salience 100))
     =>
-    (open "AnalisisSectores.txt" sectores "r+")
+    (open "../data/AnalisisSectores.txt" sectores "r+")
     (assert (SeguirLeyendoSectores))
 )
 
@@ -124,7 +124,7 @@
 (defrule OpenCartera
     (declare (salience 100))
     =>
-    (open "Cartera.txt" cartera "r+")
+    (open "../data/Cartera.txt" cartera "r+")
     (assert (LeerDisponibleCartera))
 )
 
