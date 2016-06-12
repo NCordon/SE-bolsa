@@ -1,17 +1,57 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Cargamos por este orden
-;;;     Datos de templates
-;;;     Módulo 0: E/S y deducción valores inestables
-;;;     Módulo 1: Detección de valores peligrosos
+;;;     Primer lugar
+;;;         Datos de templates
+;;;     Segundo lugar
+;;;         Módulo 0: E/S y deducción valores inestables
+;;;     Tercer lugar:
+;;;         Módulo 1: Detección de valores peligrosos
+;;;     Último lugar:
+;;;         Módulo 2: Detector de valores sobrevalorados
+;;;         Módulo 3: Detector de valores infravalorados
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 
-(defrule LoadModules
+(defrule NextModulo
+    (declare (salience -1000))
+    ?f <- (Trigger ?num)
+    ;; Debe ser un número mayor que el número de módulos
+    ;; Hace que esta regla no se ejecute indefinidamente
+    (test (< ?num 10))
+    =>
+    (retract ?f)
+    (assert (Trigger (+ ?num 1)))
+)
+
+
+(defrule LoadTemplates
     =>
     (load templates.clp)
+    (assert (Trigger 0))
+)
+
+
+(defrule LoadModulo0
+    (Trigger 0)
+    =>
     (load inout.clp)
+)
+
+(defrule LoadModulo1
+    (TriggerModulo 1)
+    =>
     (load peligrosos.clp)
+)
+
+(defrule LoadModulo2
+    (Trigger 2)
+    =>
+    (load sobrevalorados.clp)
+)
+
+(defrule LoadModulo3
+    (Trigger 2)
+    =>
     (load infravalorados.clp)
-;;; (load sobrevalorados.clp)
 )

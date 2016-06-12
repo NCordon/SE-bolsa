@@ -4,7 +4,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule OpenAcciones
-    (declare (salience 100))
     =>
     (open "../data/Analisis.txt" acciones "r+")
     (assert (SeguirLeyendoAcciones))
@@ -70,7 +69,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule OpenSectores
-    (declare (salience 100))
     =>
     (open "../data/AnalisisSectores.txt" sectores "r+")
     (assert (SeguirLeyendoSectores))
@@ -122,7 +120,6 @@
 ;;; Lectura de valores de sectores
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule OpenCartera
-    (declare (salience 100))
     =>
     (open "../data/Cartera.txt" cartera "r+")
     (assert (LeerDisponibleCartera))
@@ -194,6 +191,7 @@
 )
 
 (defrule MarcaInestablesServicios
+
     (ValorSociedad
         (Nombre ?N)
         (Sector Servicios)

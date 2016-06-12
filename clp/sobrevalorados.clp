@@ -25,7 +25,7 @@
     (assert (ValorSobrevalorado (Nombre ?N)))
 )
 
-(defrule MarcaSobrevalorados2
+(defrule MarcaSobrevalorados3
     (or (ValorSociedad
             (Nombre ?N)
             (Tamanio GRANDE)
