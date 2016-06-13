@@ -35,11 +35,11 @@
 (defrule LoadModulo0
     (Trigger 0)
     =>
-    (load inout.clp)
+    (load lectura.clp)
 )
 
 (defrule LoadModulo1
-    (TriggerModulo 1)
+    (Trigger 1)
     =>
     (load peligrosos.clp)
 )
@@ -54,4 +54,10 @@
     (Trigger 2)
     =>
     (load infravalorados.clp)
+)
+
+(defrule LoadModulo4
+    (Trigger 3)
+    =>
+    (load propuestas.clp)
 )

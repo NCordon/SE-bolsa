@@ -98,3 +98,22 @@
 (deftemplate ValorSobrevalorado
     (field Nombre)
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Template para propuestas
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(deftemplate Propuesta
+    (field Tipo
+        (type SYMBOL)
+        (allowed-values
+            VentaPeligrosos
+            CompraInfravalorados
+            VentaSobrevalorados
+            MayorRentabilidad
+        )
+    )
+    (multifield Empresa (type SYMBOL) (cardinality 1 2))
+    (field RE)
+    (field Info)
+    (field OtraEmpresa)
+)
