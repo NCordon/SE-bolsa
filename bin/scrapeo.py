@@ -110,7 +110,7 @@ datos = OrderedDict([
 
 data = pd.DataFrame(datos, filas)
 
-filas = list(set(sectores.values()))
+filas = list(set(sectores.values())) + ["Ibex"]
 n = len(filas)
 datos = OrderedDict([
     ('var', [None]*n),
@@ -187,7 +187,7 @@ for r in rows:
         data['var_2'][alias] = price_variation(history[4],history[3])
         data['var_3'][alias] = price_variation(history[3],history[2])
         data['var_4'][alias] = price_variation(history[2],history[1])
-        data['var_5'][alias] = price_variation(history[1],history[0)]
+        data['var_5'][alias] = price_variation(history[1],history[0])
 
 
 data['size'] = 100*(data['capitalization']/sum(data['capitalization']))
@@ -244,7 +244,10 @@ data['var_sector5'] = data['var5']
 """ CÁLCULO DE DATOS DE SECTORES """
 
 for s in sector_data.index.values:
-    current = data[data['sector'] == s]
+    if s == "Ibex":
+        current = data
+    else:
+        current = data[data['sector'] == s]
     count = len(current)
     sector_data['var'][s] = sum(current['var'])/count
     sector_data['capitalization'][s] = sum(current['capitalization'])
