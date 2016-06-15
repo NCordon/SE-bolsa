@@ -115,5 +115,10 @@
     (multifield Empresa (type SYMBOL) (cardinality 1 2))
     (field RE)
     (field Info)
-    (field OtraEmpresa)
 )
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Precio del dinero en porcentaje, por el BCE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(assert PrecioDinero 0)

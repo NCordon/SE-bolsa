@@ -44,7 +44,7 @@ def price_falling(prices):
     losing = True
 
     for i in range(1,len(prices)):
-        if prices[i-1] < prices[i]:
+        if prices[i] < prices[i-1]:
             losing = False
 
     return losing
@@ -61,7 +61,7 @@ def price_falling_var(vars):
 
 
 def price_variation(today, ancient):
-    return (today-ancient)/ancient
+    return 100*(today-ancient)/ancient
 
 
 def tag_sizes(data):
