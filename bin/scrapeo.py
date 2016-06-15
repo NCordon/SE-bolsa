@@ -12,6 +12,10 @@ from sectores import sectores
 import pandas as pd
 from collections import OrderedDict
 
+file_empresas = '../data/Analisis.txt'
+file_sectores = '../data/AnalisisSectores.txt'
+
+
 def to_float(s):
     return float(s.replace(".","").replace(",",".").replace("%",""))
 
@@ -41,21 +45,21 @@ def tag_rpd(rpd):
 
 
 def price_falling(prices):
-    losing = True
+    losing = 'true'
 
     for i in range(1,len(prices)):
         if prices[i] < prices[i-1]:
-            losing = False
+            losing = 'false'
 
     return losing
 
 
 def price_falling_var(vars):
-    losing = True
+    losing = 'true'
 
     for i in range(1,len(vars)):
         if vars[i] > 0:
-            losing = False
+            losing = 'false'
 
     return losing
 
@@ -135,6 +139,8 @@ datos = OrderedDict([
 sector_data = pd.DataFrame(datos, filas)
 
 
+###############################################################################
+###############################################################################
 """ CÁLCULO DE DATOS DE ACCIONES DE EMPRESAS """
 root = "http://www.bolsamadrid.es"
 
@@ -241,6 +247,9 @@ for p in periodos:
 
 data['var_sector5'] = data['var5']
 
+
+###############################################################################
+###############################################################################
 """ CÁLCULO DE DATOS DE SECTORES """
 
 for s in sector_data.index.values:
@@ -253,7 +262,7 @@ for s in sector_data.index.values:
     sector_data['capitalization'][s] = sum(current['capitalization'])
     sector_data['per'][s] = sum(current['per'])/count
     sector_data['rpd'][s] = sum(current['rpd'])/count
-    sector_data['size'][s] = sum(current['capitalization'])/sum(data['capitalization'])
+    sector_data['size'][s] = sum(current['capitalization'])/sum(data['capitalization'])*100
     sector_data['var5'][s] = sum(current['var5'])/count
     sector_data['var_1'][s] = sum(current['var_1'])/count
     sector_data['var_2'][s] = sum(current['var_2'])/count
@@ -283,4 +292,12 @@ for empresa in data.index.values:
     var_sector = sector_data['var5'][data['sector'][empresa]]
     data['var_sector5'][empresa] = data['var5'][empresa] - var_sector
 
-data['var_sector_condition'] = (data['var_sector5']<-5)
+data['var_sector_condition'] = str(data['var_sector5']<-5).lower()
+
+###############################################################################
+###############################################################################
+"""IMPRESIÓN DE ARCHIVOS"""
+data[data.columns[:-5]].to_csv( path_or_buf=file_empresas,
+                                sep=" ", header=False)
+sector_data[sector_data.columns[:-5]].to_csv( path_or_buf=file_sectores,
+                                              sep=" ", header=False)
