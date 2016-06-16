@@ -24,13 +24,17 @@
     (assert (Trigger (+ ?num 1)))
 )
 
+(deffacts Datos
+    (PropuestasImpresas 0)
+    (PrecioDinero 0)
+)
+
 
 (defrule LoadTemplates
     =>
     (load templates.clp)
     (assert (Trigger 0))
 )
-
 
 (defrule LoadModulo0
     (Trigger 0)
@@ -60,4 +64,10 @@
     (Trigger 3)
     =>
     (load propuestas.clp)
+)
+
+(defrule LoadModulo5
+    (Trigger 4)
+    =>
+    (load menu.clp)
 )

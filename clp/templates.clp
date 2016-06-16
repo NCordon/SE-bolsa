@@ -117,8 +117,19 @@
     (field Info)
 )
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Precio del dinero en porcentaje, por el BCE
+;;; Template para propuestas impresas
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(assert PrecioDinero 0)
+(deftemplate PropuestaImpresa
+    (field Tipo
+        (type SYMBOL)
+        (allowed-values
+            VentaPeligrosos
+            CompraInfravalorados
+            VentaSobrevalorados
+            MayorRentabilidad
+        )
+    )
+    (multifield Empresa (type SYMBOL) (cardinality 1 2))
+    (field NumPropuesta)
+)

@@ -291,8 +291,8 @@ for s in sector_data.index.values:
 for empresa in data.index.values:
     var_sector = sector_data['var5'][data['sector'][empresa]]
     data['var_sector5'][empresa] = data['var5'][empresa] - var_sector
+    data['var_sector_condition'][empresa] = str(data['var_sector5'][empresa]<-5).lower()
 
-data['var_sector_condition'] = str(data['var_sector5']<-5).lower()
 
 ###############################################################################
 ###############################################################################
