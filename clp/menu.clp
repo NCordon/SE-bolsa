@@ -1,6 +1,8 @@
 
 
 (defrule ImprimeMejoresOpciones
+    (ImprimeMenu)
+
     (Propuesta
         (Tipo ?Tipo)
         (Empresa $?Empresa)
@@ -13,7 +15,7 @@
         (Empresa $?Empresa)
     ))
 
-    (not (and (Propuesta (Tipo ?Tipo) (Empresa $?Empresa2) (RE ?RE2&:(> ?RE2 ?RE)))
+    (not (and (Propuesta (Tipo ?Tipo2) (Empresa $?Empresa2) (RE ?RE2&:(> ?RE2 ?RE)))
          (not (PropuestaImpresa (Tipo ?Tipo2) (Empresa $?Empresa2)))))
 
 
@@ -21,7 +23,7 @@
     (test (< ?NumPropuestas 5))
 
     =>
-
+    (printout t crlf ?Tipo)
     (bind ?Id (+ ?NumPropuestas 1))
 
     (assert (PropuestaImpresa
@@ -42,60 +44,93 @@
 
 
 (defrule Menu
-      (ImprimeMenu ?)
-      =>
-      (printout t crlf "¿Qué opción de las listadas quieres llevar a cabo: ")
-      (printout t crlf "Primera opcion      (1)")
-      (printout t crlf "Segunda opcion      (2)")
-      (printout t crlf "Tercera opcion      (3)")
-      (printout t crlf "Cuarta opcion       (4)")
-      (printout t crlf "Quinta opcion       (5)")
-      (printout t crlf "Ninguna    (otra tecla)")
+    (declare (salience -100))
+    (ImprimeMenu)
 
-      ;;;; Leemos la opcion elegida
-      (printout t crlf "Introduce tu opcion: ")
-      (bind ?Id (read))
-      (assert (OpcionElegida ?Id))
-      (assert (EntradaIncorrecta ?Id))
+    =>
+
+    (printout t crlf "¿Qué opción de las listadas quieres llevar a cabo: ")
+    (printout t crlf "Primera opcion      (1)")
+    (printout t crlf "Segunda opcion      (2)")
+    (printout t crlf "Tercera opcion      (3)")
+    (printout t crlf "Cuarta opcion       (4)")
+    (printout t crlf "Quinta opcion       (5)")
+    (printout t crlf "Ninguna    (otra tecla)")
+
+    ;;;; Leemos la opcion elegida
+    (printout t crlf "Introduce tu opcion: ")
+    (bind ?Id (read))
+    (assert (OpcionElegida ?Id))
 )
 
 
+
 (defrule ProcesaPeligrosos
-    ;;;; Si queremos seguir escogiendo, se vuelve a imprimir el menu
     (OpcionElegida ?Id)
+
+    (PropuestaImpresa
+        (Tipo VentaPeligrosos)
+        (Empresa ?Empresa)
+        (NumPropuesta ?Id))
 
     (Propuesta
         (Tipo VentaPeligrosos)
         (Empresa ?Empresa)
         (RE ?RE)
-        (Info ?Info)
-        (Impresa SI))
+        (Info ?Info))
+
+    ?ValCartera <- (ValorCartera
+        (Nombre ?Empresa)
+        (Acciones ?NumAcciones))
+
+    (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioActual))
+    ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
+
     =>
-    (if (eq ?Tipo MayorRentabilidad) then
-        (PropuestaImpresa
-            (Empresa ?Empresa1 ?Empresa2)
-            (NumPropuesta ?Id))
-    else
-        (PropuestaImpresa
-            (Empresa ?Empresa)
-            (NumPropuesta ?Id))
-    )
+    (modify ?Saldo (Invertible (+ ?Invertible (* ?NumAcciones ?PrecioActual))))
+    (retract ?ValCartera)
+    (assert (OpcionProcesada))
+    ;;(case CompraInfravalorados)
+    ;;(case VentaSobrevalorados)
+    ;;(case MayorRentabilidad)
+
+)
 
 
-    (swith ?Tipo
-        (case VentaPeligrosos then
-            ?ValCartera <- (ValorCartera
-                    (Nombre ?Empresa)
-                    (Acciones ?NumAcciones))
-            (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioActual))
+(defrule LimpiaImpresas
+    (OpcionProcesada)
+    ?impresa <- (PropuestaImpresa (Tipo ?))
 
-            ?Saldo <- (SaldoDisponible (Disponible ?Disponible))
-            (modify (?Saldo (+ ?Disponible (* ?NumAcciones ?PrecioActual))))
-            (retract ?ValCartera)
+    =>
+    (printout t crlf "Limpiando impresas")
+    (retract ?impresa)
 
-        ;;(case CompraInfravalorados)
-        ;;(case VentaSobrevalorados)
-        ;;(case MayorRentabilidad)
-        )
-    )
+)
+
+
+(defrule LimpiaPropuestas
+    (OpcionProcesada)
+    ?f <- (Propuesta (Tipo ?))
+
+    =>
+    (printout t crlf "Limpiando propuestas")
+    (retract ?f)
+)
+
+
+(defrule ReiniciaCalculoPropuestas
+    (declare (salience -1000))
+    ?elegida <- (OpcionElegida ?Id)
+    ?procesada <- (OpcionProcesada)
+    ?menu <- (ImprimeMenu)
+    ?nimpresas <- (PropuestasImpresas ?)
+
+    =>
+
+    (printout t crlf "Limpiando todo lo demás")
+    (retract ?elegida)
+    (retract ?procesada)
+    (retract ?menu)
+    (retract ?nimpresas)
+    (assert (GestionPropuestas))
 )

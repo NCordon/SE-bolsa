@@ -1,4 +1,6 @@
 (defrule VentaValoresPeligrosos
+    (GestionPropuestas)
+
     (ValorSociedad
         (Nombre ?Valor)
         (VarMes ?VarMesValor)
@@ -21,13 +23,13 @@
     (test (< ?VarMesValor 0))
 
     =>
-
+    
     (bind ?RE (- 20 ?Rpd))
     (bind ?InfoPropuesta (str-cat "La empresa " ?Valor " es peligrosa porque ha bajado un "
         (abs ?VarMesValor)"% en el último mes. Además está entrando en tendencia"
-        "bajista respecto a su sector. Según nuestra estimación existe una"
-        "probabilidad no despreciable de que pueda caer al cabo del año un 20%"
-        "aunque produzca " ?Rpd " por dividendos. Perderíamos un " ?RE "%")
+        " bajista respecto a su sector. Según nuestra estimación existe una"
+        " probabilidad no despreciable de que pueda caer al cabo del año un 20%"
+        " aunque produzca " ?Rpd " por dividendos. Perderíamos un " ?RE "%")
     )
 
     (assert (Propuesta
@@ -41,6 +43,8 @@
 
 
 (defrule CompraValoresInfravalorados
+    (GestionPropuestas)
+
     (ValorSociedad
         (Nombre ?Valor)
         (Per ?PerValor)
@@ -64,9 +68,9 @@
     (bind ?Revalorizable (/ (* (- ?PerMedio ?PerValor) 100) (* 5 ?PerValor)))
     (bind ?RE (+ ?Revalorizable ?Rpd))
     (bind ?InfoPropuesta (str-cat "La empresa " ?Valor " está infravalorada y seguramente el PER"
-        "tienda al PER medio " ?PerMedio " en 5 años, con lo que sebería revalorizar"
-        "un " ?Revalorizable "% a lo que habría que sumar un " ?Rpd "% de beneficios"
-        "por dividendos")
+        " tienda al PER medio " ?PerMedio " en 5 años, con lo que sebería revalorizar"
+        " un " ?Revalorizable "% a lo que habría que sumar un " ?Rpd "% de beneficios"
+        " por dividendos")
     )
 
     (assert (Propuesta
@@ -80,6 +84,8 @@
 
 
 (defrule VentaValoresSobrevalorados
+    (GestionPropuestas)
+
     (ValorSociedad
         (Nombre ?Valor)
         (Per ?PerValor)
@@ -109,9 +115,9 @@
         (bind ?Devaluable (/ (* (- ?PerValor ?PerMedio ) 100) (* 5 ?PerValor)))
         (bind ?RE ( - ?Devaluable ?Rpd))
         (bind ?InfoPropuesta (str-cat "La empresa " ?Valor " está sobrevalorada, ya que seguramente el"
-            "PER tan alto deberá bajar al PER medio del sector en unos 5 años, con lo"
-            "que se debería devaluar un" ?Devaluable "% anual, así que aunque se pierda"
-            "el" ?Rpd "% de beneficios por dividendos, saldría rentable")
+            " PER tan alto deberá bajar al PER medio del sector en unos 5 años, con lo"
+            " que se debería devaluar un" ?Devaluable "% anual, así que aunque se pierda"
+            " el" ?Rpd "% de beneficios por dividendos, saldría rentable")
         )
 
         (assert (Propuesta
@@ -126,6 +132,8 @@
 
 
 (defrule BuscarMayorRentabilidad
+    (GestionPropuestas)
+
     (ValorSociedad
         (Nombre ?Empresa1)
         (Per ?PerEmpresa1)
@@ -152,11 +160,11 @@
     (bind ?RE ( - ?Rpd1 (+ ?RendimientoPorAnio2 ?Rpd2  1)))
 
     (if (> ?RE 0) then
-        (bind ?InfoPropuesta (str-cat  ?Empresa1 "debe tener una revalorización acorde"
-            "con la evolución de la bolsa. Por dividendos se espera un " ?Rpd1 "%, que"
-            "es más de lo que está dandole " ?Empresa2 ", por eso propongo cambiar los"
-            "valores por los de esta otra. Aunque se pague el 1% del coste del cambio,"
-            "te saldría rentable")
+        (bind ?InfoPropuesta (str-cat  ?Empresa1 " debe tener una revalorización acorde"
+            " con la evolución de la bolsa. Por dividendos se espera un " ?Rpd1 "%, que"
+            " es más de lo que está dandole " ?Empresa2 ", por eso propongo cambiar los"
+            " valores por los de esta otra. Aunque se pague el 1% del coste del cambio,"
+            " te saldría rentable")
         )
 
         (assert (Propuesta
@@ -167,4 +175,15 @@
             (Info ?InfoPropuesta)
         ))
     )
+)
+
+(defrule MuestraPropuestas
+    (declare (salience -1000))
+    ?gestion <- (GestionPropuestas)
+
+    =>
+    (printout t crlf "Aquí le digo al menú que se imprima")
+    (retract ?gestion)
+    (assert (ImprimeMenu))
+    (assert (PropuestasImpresas 0))
 )

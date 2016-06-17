@@ -26,9 +26,8 @@
 
 ;;; Almacenamiento de hechos auxiliares
 (deffacts Aux
-    (PropuestasImpresas 0)
     (PrecioDinero 0)
-    (ImprimeMenu 0)
+    (GestionPropuestas)
 )
 
 
