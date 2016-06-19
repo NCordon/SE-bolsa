@@ -72,7 +72,7 @@
 (deftemplate ValorCartera
     (field Nombre)
     (field Acciones)
-    (field ValorAnterior)
+    ;;(field ValorAnterior)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

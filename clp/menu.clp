@@ -74,7 +74,7 @@
         (RE ?RE)
         (Info ?Info))
 
-    ?ValCartera <- (ValorCartera
+    ?Cartera <- (ValorCartera
         (Nombre ?Empresa)
         (Acciones ?NumAcciones))
 
@@ -84,7 +84,7 @@
     =>
 
     (modify ?Saldo (Invertible (+ ?Invertible (* ?NumAcciones ?PrecioActual))))
-    (retract ?ValCartera)
+    (retract ?Cartera)
     (assert (OpcionProcesada))
 )
 
@@ -104,7 +104,7 @@
         (RE ?RE)
         (Info ?Info))
 
-    ?ValCartera <- (ValorCartera
+    ?Cartera <- (ValorCartera
         (Nombre ?Empresa)
         (Acciones ?NumAcciones))
 
@@ -114,7 +114,7 @@
     =>
 
     (modify ?Saldo (Invertible (+ ?Invertible (* ?NumAcciones ?PrecioActual))))
-    (retract ?ValCartera)
+    (retract ?Cartera)
     (assert (OpcionProcesada))
 )
 
@@ -145,8 +145,8 @@
     (modify ?Saldo (Invertible (- ?Invertible ?NewValorAcciones)))
     (assert (ValorCartera
         (Nombre ?Empresa)
-        (Acciones ?NumAcciones)
-        (ValorAnterior ?NewValorAcciones)))
+        (Acciones ?NumAcciones)))
+
     (assert (OpcionProcesada))
 )
 
@@ -177,12 +177,8 @@
     (bind ?NumAcciones (div ?Invertible ?PrecioActual))
     (bind ?NewValorAcciones (* ?NumAcciones ?PrecioActual))
     (modify ?Saldo (Invertible (- ?Invertible ?NewValorAcciones)))
-    (modify ?Cartera
-        (Nombre ?Empresa)
-        (Acciones (+ ?NumAcciones ?OldNumAcciones))
-        ;;; El valor de las acciones es el de las antiguas actualizado más el
-        ;;; el de las nuevas
-        (ValorAnterior (+ ?NewValorAcciones (* ?OldNumAcciones ?PrecioActual))))
+    (modify ?Cartera (Acciones (+ ?NumAcciones ?OldNumAcciones)))
+
     (assert (OpcionProcesada))
 )
 
@@ -205,7 +201,7 @@
         (Info ?Info))
 
 
-    ?ValCartera <- (ValorCartera
+    (ValorCartera
         (Nombre ?EmpresaActual)
         (Acciones ?NumAcciones))
     (not (ValorCartera (Nombre ?EmpresaNueva)))
@@ -220,8 +216,8 @@
     (modify ?Saldo (Invertible (+ ?AntiguoSaldo (- ?Invertible ?ValorAccionesNueva))))
     (assert (ValorCartera
         (Nombre ?EmpresaNueva)
-        (Acciones ?NumAccionesNueva)
-        (ValorAnterior ?ValorAccionesNueva)))
+        (Acciones ?NumAccionesNueva)))
+
     (assert (OpcionProcesada))
 )
 
@@ -244,7 +240,7 @@
         (Info ?Info))
 
 
-    ?ValCartera <- (ValorCartera
+    (ValorCartera
         (Nombre ?EmpresaActual)
         (Acciones ?NumAcciones))
     ?Cartera <- (ValorCartera
@@ -260,9 +256,7 @@
     (bind ?NumAccionesNueva (div ?Invertible ?PrecioNueva))
     (bind ?ValorAccionesNueva (* ?NumAccionesNueva ?PrecioActual))
     (modify ?Saldo (Invertible (+ ?AntiguoSaldo (- ?Invertible ?ValorAccionesNueva))))
-    (modify ?Cartera
-        (Acciones (+ ?NumAccionesNueva ?OldNumAccionesNueva))
-        (ValorAnterior ( + ?ValorAccionesNueva (* ?NumAccionesNueva ?PrecioNueva))))
+    (modify ?Cartera (Acciones (+ ?NumAccionesNueva ?OldNumAccionesNueva)))
     (assert (OpcionProcesada))
 )
 

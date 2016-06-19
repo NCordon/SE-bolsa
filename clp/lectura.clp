@@ -151,12 +151,12 @@
 
     (if (neq ?Nombre EOF) then
         (bind ?Acciones (read cartera))
-        (bind ?ValorAnterior (read cartera))
+        (read cartera)
 
         (assert (ValorCartera
             (Nombre ?Nombre)
             (Acciones ?Acciones)
-            (ValorAnterior ?ValorAnterior)
+            ;;(ValorAnterior ?ValorAnterior)
         ))
         (assert (SeguirLeyendoCartera))
     )
