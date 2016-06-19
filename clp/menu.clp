@@ -50,12 +50,8 @@
     =>
 
     (printout t crlf "¿Qué opción de las listadas quieres llevar a cabo: ")
-    (printout t crlf "Primera opcion      (1)")
-    (printout t crlf "Segunda opcion      (2)")
-    (printout t crlf "Tercera opcion      (3)")
-    (printout t crlf "Cuarta opcion       (4)")
-    (printout t crlf "Quinta opcion       (5)")
-    (printout t crlf "Ninguna    (otra tecla)")
+    (printout t crlf "Opción número x"                      (x)")
+    (printout t crlf "Ninguna(fin del programa)    (otra tecla)")
 
     ;;;; Leemos la opcion elegida
     (printout t crlf "Introduce tu opcion: ")
@@ -64,8 +60,7 @@
 )
 
 
-
-(defrule ProcesaPeligrosos
+(defrule ProcesaVentaPeligrosos
     (OpcionElegida ?Id)
 
     (PropuestaImpresa
@@ -87,16 +82,107 @@
     ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
 
     =>
+
     (modify ?Saldo (Invertible (+ ?Invertible (* ?NumAcciones ?PrecioActual))))
     (retract ?ValCartera)
     (assert (OpcionProcesada))
-    ;;(case CompraInfravalorados)
-    ;;(case VentaSobrevalorados)
-    ;;(case MayorRentabilidad)
-
 )
 
 
+
+(defrule ProcesaVentaSobrevalorados
+    (OpcionElegida ?Id)
+
+    (PropuestaImpresa
+        (Tipo VentaSobrevalorados)
+        (Empresa ?Empresa)
+        (NumPropuesta ?Id))
+
+    (Propuesta
+        (Tipo VentaSobrevalorados)
+        (Empresa ?Empresa)
+        (RE ?RE)
+        (Info ?Info))
+
+    ?ValCartera <- (ValorCartera
+        (Nombre ?Empresa)
+        (Acciones ?NumAcciones))
+
+    (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioActual))
+    ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
+
+    =>
+
+    (modify ?Saldo (Invertible (+ ?Invertible (* ?NumAcciones ?PrecioActual))))
+    (retract ?ValCartera)
+    (assert (OpcionProcesada))
+)
+
+
+;;; Regla para comprar valores infravalorados cuando están en cartera
+(defrule ProcesaCompraInfravaloradosFueraCartera
+    (OpcionElegida ?Id)
+
+    (PropuestaImpresa
+        (Tipo CompraInfravalorados)
+        (Empresa ?Empresa)
+        (NumPropuesta ?Id))
+
+    (Propuesta
+        (Tipo CompraInfravalorados)
+        (Empresa ?Empresa)
+        (RE ?RE)
+        (Info ?Info))
+
+    ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
+    (not (ValorCartera (Nombre ?Empresa)))
+    (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioActual))
+    ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
+
+    =>
+    (bind ?NumAcciones (/ ?Invertible ?PrecioActual))
+    (modify ?Saldo (Invertible (- ?Invertible (* ?NumAcciones ?PrecioActual))))
+    (assert ValorCartera
+        (Nombre ?Empresa)
+        (Acciones ?NumAcciones)
+        (ValorAnterior ?PrecioActual))
+    (assert (OpcionProcesada))
+)
+
+
+
+;;; Regla para comprar valores infravalorados cuando no están en cartera
+(defrule ProcesaCompraInfravaloradosDentroCartera
+    (OpcionElegida ?Id)
+
+    (PropuestaImpresa
+        (Tipo CompraInfravalorados)
+        (Empresa ?Empresa)
+        (NumPropuesta ?Id))
+
+    (Propuesta
+        (Tipo CompraInfravalorados)
+        (Empresa ?Empresa)
+        (RE ?RE)
+        (Info ?Info))
+
+    ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
+    ?Cartera <- (ValorCartera (Nombre ?Empresa))
+    (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioActual))
+    ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
+
+    =>
+    (bind ?NumAcciones (/ ?Invertible ?PrecioActual))
+    (modify ?Saldo (Invertible (- ?Invertible (* ?NumAcciones ?PrecioActual))))
+    (modify ?Cartera
+        (Nombre ?Empresa)
+        (Acciones ?NumAcciones)
+        (ValorAnterior ?PrecioActual))
+    (assert (OpcionProcesada))
+)
+
+;;; Limpiamos las propuestas impresas y no impresas para volver a ejecutar el
+;;; módulo de cálculo de propuestas
 (defrule LimpiaImpresas
     (OpcionProcesada)
     ?impresa <- (PropuestaImpresa (Tipo ?))
@@ -118,6 +204,8 @@
 )
 
 
+;;; Limpiamos resto de variables, y le decimos al módulo de cálculo de propuestas
+;;; que se ejecute
 (defrule ReiniciaCalculoPropuestas
     (declare (salience -1000))
     ?elegida <- (OpcionElegida ?Id)

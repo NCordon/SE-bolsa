@@ -1,4 +1,4 @@
-(defrule VentaValoresPeligrosos
+(defrule PropuestasPeligrosos
     (GestionPropuestas)
 
     (ValorSociedad
@@ -23,7 +23,7 @@
     (test (< ?VarMesValor 0))
 
     =>
-    
+
     (bind ?RE (- 20 ?Rpd))
     (bind ?InfoPropuesta (str-cat "La empresa " ?Valor " es peligrosa porque ha bajado un "
         (abs ?VarMesValor)"% en el último mes. Además está entrando en tendencia"
@@ -42,7 +42,7 @@
 
 
 
-(defrule CompraValoresInfravalorados
+(defrule PropuestasInfravalorados
     (GestionPropuestas)
 
     (ValorSociedad
@@ -83,7 +83,7 @@
 
 
 
-(defrule VentaValoresSobrevalorados
+(defrule PropuestasSobrevalorados
     (GestionPropuestas)
 
     (ValorSociedad
@@ -131,7 +131,7 @@
 
 
 
-(defrule BuscarMayorRentabilidad
+(defrule PropuestasMayorRentabilidad
     (GestionPropuestas)
 
     (ValorSociedad
@@ -177,12 +177,13 @@
     )
 )
 
+;;; Le decimos al menú que se imprima
 (defrule MuestraPropuestas
     (declare (salience -1000))
     ?gestion <- (GestionPropuestas)
 
     =>
-    (printout t crlf "Aquí le digo al menú que se imprima")
+
     (retract ?gestion)
     (assert (ImprimeMenu))
     (assert (PropuestasImpresas 0))
