@@ -50,7 +50,7 @@
     =>
 
     (printout t crlf "¿Qué opción de las listadas quieres llevar a cabo: ")
-    (printout t crlf "Opción número x"                      (x)")
+    (printout t crlf "Opción número x                       (x)")
     (printout t crlf "Ninguna(fin del programa)    (otra tecla)")
 
     ;;;; Leemos la opcion elegida
@@ -60,7 +60,7 @@
 )
 
 
-(defrule ProcesaVentaPeligrosos
+(defrule ProcesaVentaPeligroso
     (OpcionElegida ?Id)
 
     (PropuestaImpresa
@@ -137,18 +137,18 @@
     ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
     (not (ValorCartera (Nombre ?Empresa)))
     (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioActual))
-    ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
 
     =>
-    (bind ?NumAcciones (/ ?Invertible ?PrecioActual))
-    (modify ?Saldo (Invertible (- ?Invertible (* ?NumAcciones ?PrecioActual))))
-    (assert ValorCartera
+
+    (bind ?NumAcciones (div ?Invertible ?PrecioActual))
+    (bind ?NewValorAcciones (* ?NumAcciones ?PrecioActual))
+    (modify ?Saldo (Invertible (- ?Invertible ?NewValorAcciones)))
+    (assert (ValorCartera
         (Nombre ?Empresa)
         (Acciones ?NumAcciones)
-        (ValorAnterior ?PrecioActual))
+        (ValorAnterior ?NewValorAcciones)))
     (assert (OpcionProcesada))
 )
-
 
 
 ;;; Regla para comprar valores infravalorados cuando no están en cartera
@@ -167,19 +167,105 @@
         (Info ?Info))
 
     ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
-    ?Cartera <- (ValorCartera (Nombre ?Empresa))
+    ?Cartera <- (ValorCartera
+        (Nombre ?Empresa)
+        (Acciones ?OldNumAcciones))
     (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioActual))
-    ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
 
     =>
-    (bind ?NumAcciones (/ ?Invertible ?PrecioActual))
-    (modify ?Saldo (Invertible (- ?Invertible (* ?NumAcciones ?PrecioActual))))
+
+    (bind ?NumAcciones (div ?Invertible ?PrecioActual))
+    (bind ?NewValorAcciones (* ?NumAcciones ?PrecioActual))
+    (modify ?Saldo (Invertible (- ?Invertible ?NewValorAcciones)))
     (modify ?Cartera
         (Nombre ?Empresa)
-        (Acciones ?NumAcciones)
-        (ValorAnterior ?PrecioActual))
+        (Acciones (+ ?NumAcciones ?OldNumAcciones))
+        ;;; El valor de las acciones es el de las antiguas actualizado más el
+        ;;; el de las nuevas
+        (ValorAnterior (+ ?NewValorAcciones (* ?OldNumAcciones ?PrecioActual))))
     (assert (OpcionProcesada))
 )
+
+
+
+;;; Regla para cambiar acciones de una empresa por otras cuando la empresa
+;;; de la que queremos comprar acciones está fuera de cartera
+(defrule ProcesaMayorRentabilidadFueraCartera
+    (OpcionElegida ?Id)
+
+    (PropuestaImpresa
+        (Tipo MayorRentabilidad)
+        (Empresa ?EmpresaActual ?EmpresaNueva)
+        (NumPropuesta ?Id))
+
+    (Propuesta
+        (Tipo MayorRentabilidad)
+        (Empresa ?EmpresaActual ?EmpresaNueva)
+        (RE ?RE)
+        (Info ?Info))
+
+
+    ?ValCartera <- (ValorCartera
+        (Nombre ?EmpresaActual)
+        (Acciones ?NumAcciones))
+    (not (ValorCartera (Nombre ?EmpresaNueva)))
+    (ValorSociedad (Nombre ?EmpresaActual) (Precio ?PrecioActual))
+    (ValorSociedad (Nombre ?EmpresaNueva) (Precio ?PrecioNUeva))
+    ?Saldo <- (SaldoDisponible (Invertible ?AntiguoSaldo))
+
+    =>
+    (bind ?Invertible (* ?NumAcciones ?PrecioActual))
+    (bind ?NumAccionesNueva (div ?Invertible ?PrecioNUeva))
+    (bind ?ValorAccionesNueva (* ?NumAccionesNueva ?PrecioActual))
+    (modify ?Saldo (Invertible (+ ?AntiguoSaldo (- ?Invertible ?ValorAccionesNueva))))
+    (assert (ValorCartera
+        (Nombre ?EmpresaNueva)
+        (Acciones ?NumAccionesNueva)
+        (ValorAnterior ?ValorAccionesNueva)))
+    (assert (OpcionProcesada))
+)
+
+
+
+;;; Regla para cambiar acciones de una empresa por otras cuando la empresa
+;;; de la que queremos comprar acciones está dentro de cartera
+(defrule ProcesaMayorRentabilidadDentroCartera
+    (OpcionElegida ?Id)
+
+    (PropuestaImpresa
+        (Tipo MayorRentabilidad)
+        (Empresa ?EmpresaActual ?EmpresaNueva)
+        (NumPropuesta ?Id))
+
+    (Propuesta
+        (Tipo MayorRentabilidad)
+        (Empresa ?EmpresaActual ?EmpresaNueva)
+        (RE ?RE)
+        (Info ?Info))
+
+
+    ?ValCartera <- (ValorCartera
+        (Nombre ?EmpresaActual)
+        (Acciones ?NumAcciones))
+    ?Cartera <- (ValorCartera
+        (Nombre ?EmpresaNueva)
+        (Acciones ?OldNumAccionesNueva))
+    (ValorSociedad (Nombre ?EmpresaActual) (Precio ?PrecioActual))
+    (ValorSociedad (Nombre ?EmpresaNueva) (Precio ?PrecioNueva))
+    ?Saldo <- (SaldoDisponible (Invertible ?AntiguoSaldo))
+
+    =>
+
+    (bind ?Invertible (* ?NumAcciones ?PrecioActual))
+    (bind ?NumAccionesNueva (div ?Invertible ?PrecioNueva))
+    (bind ?ValorAccionesNueva (* ?NumAccionesNueva ?PrecioActual))
+    (modify ?Saldo (Invertible (+ ?AntiguoSaldo (- ?Invertible ?ValorAccionesNueva))))
+    (modify ?Cartera
+        (Acciones (+ ?NumAccionesNueva ?OldNumAccionesNueva))
+        (ValorAnterior ( + ?ValorAccionesNueva (* ?NumAccionesNueva ?PrecioNueva))))
+    (assert (OpcionProcesada))
+)
+
 
 ;;; Limpiamos las propuestas impresas y no impresas para volver a ejecutar el
 ;;; módulo de cálculo de propuestas
