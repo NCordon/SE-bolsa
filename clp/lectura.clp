@@ -117,12 +117,41 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Lectura de noticias
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule OpenNoticias
+    =>
+    (open "../data/Noticias.txt" noticias "r+")
+    (assert (SeguirLeyendoNoticias))
+)
+
+(defrule ReadNoticia
+    ?f <- (SeguirLeyendoNoticias)
+    =>
+    (retract ?f)
+    (bind ?Nombre (read noticias))
+
+    (if (neq ?Nombre EOF) then
+        (bind ?Calificacion (read noticias))
+        (bind ?Antiguedad (read noticias))
+
+        (assert (Noticia
+            (Nombre ?Nombre)
+            (Calificacion ?Calificacion)
+            (Antiguedad ?Antiguedad)
+        ))
+        (assert (SeguirLeyendoNoticias))
+    )
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Lectura de valores de sectores
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule OpenCartera
     =>
     (open "../data/Cartera.txt" cartera "r+")
-    (assert (LeerDisponibleCartera))
+    (assert (SeguirLeyendoCartera))
 )
 
 
