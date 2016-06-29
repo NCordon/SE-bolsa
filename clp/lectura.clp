@@ -197,14 +197,15 @@
 
 (defrule MarcaInestablesConstruccion
     (ValorSociedad
-        (Nombre ?N)
+        (Nombre ?Nombre)
         (Sector Construccion)
     )
 
     =>
 
-    (assert (ValorInestable (Nombre ?N)))
+    (assert (ValorInestable (Nombre ?Nombre)))
 )
+
 
 (defrule VerdadEconomiaBajando
     (ValorSector
@@ -219,16 +220,62 @@
     (assert (EconomiaBajando))
 )
 
+
 (defrule MarcaInestablesServicios
 
     (ValorSociedad
-        (Nombre ?N)
+        (Nombre ?Nombre)
         (Sector Servicios)
     )
 
     (EconomiaBajando)
+
     =>
 
-    (assert (ValorInestable (Nombre ?N)))
+    (assert (ValorInestable (Nombre ?Nombre)))
 
+)
+
+
+(defrule DesmarcaInestablesNoticias
+
+    (ValorSociedad
+        (Nombre ?Nombre)
+        (Sector ?Sector)
+    )
+
+    ?f <- (ValorInestable (Nombre ?Nombre))
+
+    (or
+        (Noticia (Nombre ?Nombre) (Calificacion Buena) (Antiguedad ?Antiguedad))
+        (Noticia (Nombre ?Sector) (Calificacion Buena) (Antiguedad ?Antiguedad))
+    )
+
+    (test (<= ?Antiguedad 2))
+
+    =>
+
+    (assert (ValorInestable (Nombre ?Nombre)))
+    (retract ?f)
+)
+
+
+(defrule MarcaInestablesNoticias
+
+    (ValorSociedad
+        (Nombre ?Nombre)
+        (Sector ?Sector)
+    )
+
+    (or
+        (Noticia (Nombre ?Nombre) (Calificacion Mala) (Antiguedad ?Antiguedad))
+        (Noticia (Nombre ?Sector) (Calificacion Mala) (Antiguedad ?Antiguedad))
+        (Noticia (Nombre General) (Calificacion Mala) (Antiguedad ?Antiguedad))
+    )
+
+    (test (<= ?Antiguedad 2))
+
+    =>
+
+    (assert (ValorInestable (Nombre ?Nombre)))
 )
