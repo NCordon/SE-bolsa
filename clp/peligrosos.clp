@@ -6,7 +6,7 @@
         (Nombre ?Nombre)
         (Perdiendo3 ?Perdiendo3)
         (Perdiendo5 ?Perdiendo5)
-        (VarSectorLower-5 ?CondicionVariacion)
+        (VarSectorGreater-5 ?CondicionVariacion)
     )
 
 

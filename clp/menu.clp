@@ -34,12 +34,30 @@
 
     (printout t crlf "################################################")
     (printout t crlf "Propuesta número " ?Id)
-    (printout t crlf "El rendimiento esperado de esta propuesta es " ?RE)
-    (printout t crlf "################################################"  )
+    (printout t crlf "  RE: " ?RE)
+    (printout t crlf)
     (printout t crlf ?Info)
+    (printout t crlf "################################################"  )
     (printout t crlf)
     (retract ?f)
     (assert (PropuestasImpresas ?Id))
+)
+
+(defrule ImprimeSaldo
+    (declare (salience -75))
+    (ImprimeMenu)
+    (SaldoDisponible (Invertible ?Invertible))
+    =>
+    (printout t crlf "Saldo disponible: " ?Invertible)
+)
+
+
+(defrule ImprimeCartera
+    (declare (salience -50))
+    (ImprimeMenu)
+    (ValorCartera (Nombre ?Nombre) (Acciones ?Acciones))
+    =>
+    (printout t crlf "Tienes " ?Acciones " acciones de " ?Nombre)
 )
 
 
@@ -49,9 +67,10 @@
 
     =>
 
+    (printout t crlf)
     (printout t crlf "¿Qué opción de las listadas quieres llevar a cabo: ")
-    (printout t crlf "Opción número x                       (x)")
-    (printout t crlf "Ninguna(fin del programa)    (otra tecla)")
+    (printout t crlf "Opción número n                       (n)")
+    (printout t crlf "Ninguna (fin del programa)    (otra tecla)")
 
     ;;;; Leemos la opcion elegida
     (printout t crlf "Introduce tu opcion: ")

@@ -1,51 +1,46 @@
 (defrule MarcaInfravalorados1
     (ValorSociedad
-        (Nombre ?N)
+        (Nombre ?Nombre)
         (EtiquetaPer Bajo)
         (EtiquetaRpd Alto)
     )
     =>
-    (assert (ValorInfravalorado (Nombre ?N)))
+    (assert (ValorInfravalorado (Nombre ?Nombre)))
 )
 
 (defrule MarcaInfravalorados2
     (ValorSociedad
-        (Nombre ?N)
+        (Nombre ?Nombre)
         (VarTrimestre ?VarTrimestre)
         (VarSemestre ?VarSemestre)
         (VarAnio ?VarAnio)
         (VarMes ?VarMes)
         (EtiquetaPer Bajo)
-        (EtiquetaRpd Alto)
     )
-    (or (test (< ?VarSemestre -0.3))
-    (or (test (< ?VarTrimestre -0.3))
-        (test (< ?VarAnio -0.3))))
+    (or (test (< ?VarSemestre -30))
+        (test (< ?VarTrimestre -30))
+        (test (< ?VarAnio -0.3)))
 
     (test (> ?VarMes 0))
     (test (< ?VarMes 10))
     =>
-    (assert (ValorInfravalorado (Nombre ?N)))
+    (assert (ValorInfravalorado (Nombre ?Nombre)))
 )
 
 (defrule MarcaInfravalorados3
     (ValorSociedad
-        (Nombre ?N)
+        (Nombre ?Nombre)
         (Tamanio GRANDE)
         (VarMes ?VarMes)
         (EtiquetaPer Medio)
         (EtiquetaRpd Alto)
-        (Sector ?Sector)
         (VarSector5 ?VarSector5)
     )
 
-    (ValorSector
-        (Nombre ?Sector)
-    )
-
+    ;;; No está bajando
     (test (>= ?VarMes 0))
-    (test (< ?VarMes 10))
+    ;;; Se comporta mejor que su sector
     (test (> ?VarSector5 0))
     =>
-    (assert (ValorInfravalorado (Nombre ?N)))
+    (assert (ValorInfravalorado (Nombre ?Nombre)))
 )

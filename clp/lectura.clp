@@ -1,6 +1,6 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Lectura de valores al cierre
+;;; Lectura de valores al cierre y cálculo de datos deducidos
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule OpenAcciones
@@ -31,7 +31,7 @@
         (bind ?Perdiendo3 (read acciones))
         (bind ?Perdiendo5 (read acciones))
         (bind ?VarSector5 (read acciones))
-        (bind ?VarSectorLower-5 (read acciones))
+        (bind ?VarSectorGreater-5 (read acciones))
         (bind ?VarMes (read acciones))
         (bind ?VarTrimestre (read acciones))
         (bind ?VarSemestre (read acciones))
@@ -53,7 +53,7 @@
             (Perdiendo3 ?Perdiendo3)
             (Perdiendo5 ?Perdiendo5)
             (VarSector5 ?VarSector5)
-            (VarSectorLower-5 ?VarSectorLower-5)
+            (VarSectorGreater-5 ?VarSectorGreater-5)
             (VarMes ?VarMes)
             (VarTrimestre ?VarTrimestre)
             (VarSemestre ?VarSemestre)
@@ -151,7 +151,7 @@
 (defrule OpenCartera
     =>
     (open "../data/Cartera.txt" cartera "r+")
-    (assert (SeguirLeyendoCartera))
+    (assert (LeerDisponibleCartera))
 )
 
 
