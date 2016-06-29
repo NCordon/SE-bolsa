@@ -32,10 +32,10 @@ sectores = {
     'MAPFRE':'Bancos',
     'MEDIASET_ESP':'Servicios',
     'MERLIN_PROP': 'Bancos',
-    'OBR.H.LAIN': 'Construccion',
     'RED_ELE.CORP': 'Energia',
     'REPSOL':'Energia',
-    'SACYR':'Construccion',
     'TEC.REUNIDAS':'Teconologia',
     'TELEFONICA':'Tecnologia',
+    'CELLNEX':'Tecnologia',
+    'VISCOFAN':'Bienes'
 }

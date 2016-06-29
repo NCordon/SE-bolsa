@@ -64,7 +64,7 @@
     (test (> ?Invertible 0))
 
     =>
-
+    ;;(printout t crlf "Estoy entrando otra vez en PropuestasInfravalorados")
     (bind ?Revalorizable (/ (* (- ?PerMedio ?PerValor) 100) (* 5 ?PerValor)))
     (bind ?RE (+ ?Revalorizable ?Rpd))
     (bind ?InfoPropuesta (str-cat "La empresa " ?Valor " está infravalorada y seguramente el PER"
