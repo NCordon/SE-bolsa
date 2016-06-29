@@ -30,8 +30,6 @@
     (GestionPropuestas)
 )
 
-
-
 (defrule LoadTemplates
     =>
     (load templates.clp)

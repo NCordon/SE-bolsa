@@ -3,3 +3,10 @@ data/AnalisisSectores_old.txt
 bin/.ipynb_checkpoints/*
 bin/Untitled.ipynb
 *.pyc
+
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.toc
+*.pdf
