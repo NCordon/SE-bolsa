@@ -62,7 +62,7 @@
 
     ;;; El usuario tiene dinero para invertir
     (test (> ?Invertible 0))
-
+    (test (neq ?PerValor 0))
     =>
     ;;(printout t crlf "Estoy entrando otra vez en PropuestasInfravalorados")
     (bind ?Revalorizable (/ (* (- ?PerMedio ?PerValor) 100) (* 5 ?PerValor)))
@@ -107,6 +107,7 @@
 
     (ValorSobrevalorado (Nombre ?Valor))
 
+    (test (neq ?PerValor 0))
     =>
 
     (bind ?RendimientoPorAnio (+ ?Rpd ?VarAnio))
@@ -170,7 +171,7 @@
         (assert (Propuesta
             (Tipo MayorRentabilidad)
             ;; Vender acciones de 2 y comprar de 1
-            (Empresa ?Empresa1 ?Empresa2)
+            (Empresa ?Empresa2 ?Empresa1)
             (RE ?RE)
             (Info ?InfoPropuesta)
         ))

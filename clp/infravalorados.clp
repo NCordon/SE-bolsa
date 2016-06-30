@@ -19,7 +19,7 @@
     )
     (or (test (< ?VarSemestre -30))
         (test (< ?VarTrimestre -30))
-        (test (< ?VarAnio -0.3)))
+        (test (< ?VarAnio -30)))
 
     (test (> ?VarMes 0))
     (test (< ?VarMes 10))

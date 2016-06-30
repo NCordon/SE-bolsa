@@ -32,13 +32,13 @@
             (Nombre ?Nombre)
             (Tamanio GRANDE)
             (EtiquetaRpd Bajo)
-            (EtiquetaPer Alto)
+            (EtiquetaPer Medio)
         )
         (ValorSociedad
             (Nombre ?Nombre)
             (Tamanio GRANDE)
             (EtiquetaRpd Bajo)
-            (EtiquetaPer Medio)
+            (EtiquetaPer Alto)
         )
         (ValorSociedad
             (Nombre ?Nombre)

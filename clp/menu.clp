@@ -162,8 +162,8 @@
     (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioActual))
 
     =>
-    ;;(printout t crlf "Comprando infravalorados")
-    (bind ?NumAcciones (div ?Invertible ?PrecioActual))
+    ;; Se invierte la mitad del dinero
+    (bind ?NumAcciones (integer (/ (/ ?Invertible 2) ?PrecioActual)))
     (bind ?NewValorAcciones (* ?NumAcciones ?PrecioActual))
     (modify ?Saldo (Invertible (- ?Invertible ?NewValorAcciones)))
     (assert (ValorCartera
@@ -191,24 +191,25 @@
         (Info ?Info))
 
 
-    (ValorCartera
+    ?f <- (ValorCartera
         (Nombre ?EmpresaActual)
         (Acciones ?NumAcciones))
 
     (ValorSociedad (Nombre ?EmpresaActual) (Precio ?PrecioActual))
-    (ValorSociedad (Nombre ?EmpresaNueva) (Precio ?PrecioNUeva))
+    (ValorSociedad (Nombre ?EmpresaNueva) (Precio ?PrecioNueva))
     ?Saldo <- (SaldoDisponible (Invertible ?AntiguoSaldo))
 
     =>
     (bind ?Invertible (* ?NumAcciones ?PrecioActual))
-    (bind ?NumAccionesNueva (div ?Invertible ?PrecioNUeva))
-    (bind ?ValorAccionesNueva (* ?NumAccionesNueva ?PrecioActual))
+    (bind ?NumAccionesNueva (integer (/ ?Invertible ?PrecioNueva)))
+    (bind ?ValorAccionesNueva (* ?NumAccionesNueva ?PrecioNueva))
     (modify ?Saldo (Invertible (+ ?AntiguoSaldo (- ?Invertible ?ValorAccionesNueva))))
     (assert (ValorCartera
         (Nombre ?EmpresaNueva)
         (Acciones ?NumAccionesNueva)))
 
     (assert (OpcionProcesada))
+    (retract ?f)
 )
 
 
@@ -228,7 +229,7 @@
 
     =>
 
-    (modify ?Cartera1 (Acciones (+ ?NumAcciones1 ?NumAcciones1)))
+    (modify ?Cartera1 (Acciones (+ ?NumAcciones1 ?NumAcciones2)))
     (retract ?Cartera2)
 )
 

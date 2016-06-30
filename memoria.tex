@@ -113,7 +113,7 @@
 }
 
 %Customize enumerate tag
-\usepackage{enumitem}
+\usepackage{enumerate}
 %Sections don't get numbered
 %\setcounter{secnumdepth}{0}
 \newcommand{\blue}[1]{\textcolor{blue}{#1}}
@@ -259,6 +259,114 @@ llevar a cabo alguna de las propuestas.
 \section{Proceso de desarrollo}
 
 \subsection{Sesiones con el experto}
+  
+\subsubsection{Primera sesión: adquisión de un conocimiento general sobre el sistema a desarrollar}
+
+Se realiza una entrevista abierta al experto en la que se le plantean cuestiones tales como ¿cuál es el objetivo del sistema?,
+¿qué entradas espera obtener?, ¿qué salidas espera obtener?, ¿de dónde se obtienen los valores necesarios para el sistema?,
+¿cuál es el esquema general de funcionamiento del sistema?.
+
+La información recopilada ha sido que buscamos un sistema que permita realizar simulaciones a partir de inversiones en bolsa,
+al que se le proporciona una cartera de valores que poseemos, y que debe aportar a la salida dicha cartera modificada. 
+Los datos es preciso obtenerlos del Ibex35 de forma gratuita, es decir, que no podemos pagar por la información que obtengamos.
+El sistema debe aportar la información suficiente para que un aprendiz pueda extraer conocimiento sobre la bondad de las acciones
+llevadas a cabo. Los valores pueden ser inestables, peligrosos, infravalorados y sobrevalorados y efectuaremos
+una serie de propuestas a raíz de la información disponible sobre cada valor.
+
+\subsubsection{Segunda sesión: cálculo de valores inestables}
+
+Se plantea una entrevista estructurada al experto, efectuándole una relación de cuestiones. En adelante en todas las sesiones
+se plantean entrevistas estructuradas.
+
+\begin{itemize}
+ \item ¿Qué tipos de noticias podemos tener? ¿Sobre sectores también podemos tener noticias?
+  ¿Podemos tener noticias sobre la economía en general?
+ \item ¿Qué se considera un valor inestable?
+ \item ¿En qué casos un valor empieza a ser inestable? ¿Durante cuánto tiempo?
+ \item ¿Puede un valor inestable dejar de serlo? ¿En qué casos? ¿Puede poner un ejemplo?
+\end{itemize}
+
+La información educida, a grandes rasgos en esta y posteriores sesiones sobre los valores que necesitam, ha sido la listada a continuación: 
+Una empresa se considera inestable por defecto si pertenece al sector de la construcción. Los valores del sector servicios
+se consideran inestables si la economía está bajando. Si un valor tiene una noticia negativa, se considera inestable durante 2 días.
+Si tenemos una noticia negativa sobre un sector, todos los valores de ese sector pasan a ser inestables durante dos días.
+Si hay una noticia negativa sobre la economía en general, todos los valores pasan a ser inestables.
+Si hay una noticia positiva sobre un valor este deja de ser inestable 2 días.
+
+
+\subsubsection{Tercera sesión: cálculo de valores peligrosos}
+
+Cuestiones planteadas al experto:
+\begin{itemize}
+ \item ¿Cuándo un valor se considera que es peligroso?
+ \item ¿Qué significa que su sector ha variado un 5\%(o más) que el valor? ¿Puede poner un ejemplo?
+\end{itemize}
+
+La información educida ha sido: un valor se considera peligroso si es inestable y está perdiendo de forma continua durante
+los tres últimos días, o bien si ha estado perdiendo de forma continua durante los últimos 5 días y la variación en esos 5
+días respecto a la del sector ha sido menor que -5\%, esto es $$var\_valor - var\_sector < - 5 $$
+
+\subsubsection{Cuarta sesión: cálculo de valores sobrevalorados e infravalorados}
+
+Cuestiones planteadas al experto:
+\begin{itemize}
+ \item ¿Cuándo un valor se considera que es sobrevalorado? ¿Y peligroso?
+ \item ¿Cuándo el PER es alto? ¿Y mediano? ¿Y bajo?
+ \item Ídem para el RPD.
+ \item ¿Qué significa que una empresa es grande, mediana o pequeña?
+ \item ¿Qué significa en el cálculo de valores infravalorados que una empresa haya subido pero no mucho en el último mes?
+ \item ¿Qué significa en el cálculo de valores infravalorados que una empresa se comporte mejor que su sector?
+\end{itemize} 
+
+La información educida ha sido: 
+\begin{enumerate}[$\rightarrow$]
+ \item Una empresa está sobrevalorada si el PER es alto y el RPD bajo.
+ \item En el caso de empresas pequeñas, están sobrevaloradas si el PER es alto; o el PER es mediano y el RPD es bajo.
+ \item En empresas grandes, si el RPD es bajo y el PER mediano o alto, la empresa está sobrevalorada; si el RPD es mediano
+ y el PER es alto, también.
+ \item Una empresa está infravalorada si el PER es bajo y su RPD alto.
+ \item Si una empresa ha caído más de un 30\%, ha subido, pero no mucho en el último mes (esto significa menos de un 10\%),
+ y el PER es bajo, la empresa está infravalorada.
+ \item Si una empresa es grande, su RPD alto, y su PER mediano, no está bajando y se comporta mejor que su sector (esto es
+ la diferencia de variación de la cotización de la empresa en los últimos 5 días es superior a la variación del sector en 
+ esos 5 días), la empresa está infravalorada.
+ \item El tamaño de una empresa se mide por el porcentaje de capitalización que representa respecto al total del Ibex35. Si
+ este porcentaje es menor que 2\%, la empresa es pequeña. Si está entre 2\% y 5\%, la empresa es mediana.; si es mayor que 
+ un 5 \%, la empresa es grande.
+ \item El PER de una empresa es bajo si es menor de 12\%, medio si está entre 12\% y 18\%. Alto si es superior al 18\%.
+ \item El RPD de una empresa es bajo si es menor que un 2\%, medio si se encuentra entre un 2\% y un 5\%. Alto si es superior
+ a un 5\%.
+\end{enumerate}
+
+\subsubsection{Quinta sesión: realización de propuestas}
+
+Cuestiones planteadas al experto:
+\begin{itemize}
+ \item ¿Cuándo se invierte en acciones? ¿Cuánto dinero invertimos cuando lo hacemos?
+ \item ¿Cuándo se venden acciones?
+ \item ¿Cuántas propuestas debemos ofrecer? ¿En base a qué ordenamos las propuestas?
+\end{itemize} 
+
+La información educida ha sido:
+
+\begin{enumerate}[$\rightarrow$]
+ \item Se venden acciones cuando una empresa es peligrosa, ha bajado el último mes y no ha bajado más de un 30\% respecto 
+ a su sector el último mes.
+ \item Se ofrecen propuestas conforme a un cálculo de rendimiento esperado. En el caso anterior por ejemplo, el rendimiento
+ esperado era 20-rpd.
+ \item Asimismo, también se venden acciones de empresas sobrevaloradas, cuyo rendimiento por año (cuyo concepto
+ le es cuestionado, y responde que el rendimiento por año y nos contesta que se trata del rendimiento por dividendos más la
+ variación anual) es menor que 5 más el precio del dinero (el declarado por el BCE).
+ \item El rendimiento esperado en el caso anterior sería $$-RPD + 100 \frac{PER - PER\_SECTOR}{5*PER}$$
+ \item Se efectúan compras cuando una empresa está infravalorada y el usuario tiene dinero para invertir. El rendimiento esperado
+ es $$RPD + 100 \frac{PER\_SECTOR - PER}{5*PER}$$. Se invierte solo la mitad del dinero.
+ \item También se efectúan compras cuando tengo una empresa en mi cartera no infravalorada y otra que no está sobrevalorada
+ y cuyo RPD es mayor que el rendimiento por año + RPD + 1 de la empresa de mi cartera, entonces se cambian las acciones de una
+ empresa por las de otra.
+ \item Asimismo, el experto también ha proporcionado una explicación de por qué se realiza cada acción.
+ \item Se ofrecen las 5 propuestas cuyo RE sea mayor, y se lleva a cabo una. Después el sistema volverá a ofrecer nuevas propuestas.
+\end{enumerate}
+
 
 \subsection{Procedimiento de validación y verificación}
 

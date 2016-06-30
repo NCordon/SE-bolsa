@@ -19,7 +19,7 @@
     (field Perdiendo3)
     (field Perdiendo5)
     (field VarSector5)
-    (field VarSectorGreater-5)
+    (field VarSectorLower-5)
     (field VarSemana)
     (field VarMes)
     (field VarTrimestre)
