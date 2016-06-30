@@ -370,4 +370,23 @@ La información educida ha sido:
 
 \subsection{Procedimiento de validación y verificación}
 
+
+\subsection{Manual de uso}
+
+El archivo \texttt{bin/scrapeo.py} se debería programar con \texttt{cron} o \texttt{crontab}
+para ejecutarse diariamente de madrugada, y que actualizara los datos de la bolsa. En Windows se podría programar su ejecución 
+con el programador de tareas del sistema.
+
+Para ejecutar el SE, basta hacer la siguiente sucesión de órdenes(en sistemas UNIX, y situado dentro del directorio \texttt{clp}):
+
 \end{document}
+\begin{minted}{bash}
+ clips
+ (load main.clp)
+ (reset)
+ (run)
+\end{minted}
+
+El menú ofrecerá al usuario opciones, habiéndose imprimido éstas y la cartera con anterioridad. Basta pulsar una opción correcta
+(1,2,3,4, o 5) para observar sus resultados. En caso de querer parar la ejecución del sitema, basta introducir una opción
+distinta de estas 5.
