@@ -11,6 +11,11 @@
 ;;;         Módulo 3: Detector de valores infravalorados
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;;; Almacenamiento de hechos auxiliares
+(deffacts Entrada
+    (PrecioDinero 0)
+    (GestionPropuestas)
+)
 
 
 (defrule NextModulo
@@ -22,12 +27,6 @@
     =>
     (retract ?f)
     (assert (Trigger (+ ?num 1)))
-)
-
-;;; Almacenamiento de hechos auxiliares
-(deffacts Aux
-    (PrecioDinero 0)
-    (GestionPropuestas)
 )
 
 (defrule LoadTemplates

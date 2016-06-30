@@ -69,14 +69,44 @@
 
     (printout t crlf)
     (printout t crlf "¿Qué opción de las listadas quieres llevar a cabo: ")
-    (printout t crlf "Opción número n                       (n)")
-    (printout t crlf "Ninguna (fin del programa)    (otra tecla)")
+    (printout t crlf "Opción número n                              (n)")
+    (printout t crlf "Actualiza cartera                            (c)")
+    (printout t crlf "Abortar (no se escribe en cartera)  (otra tecla)")
 
     ;;;; Leemos la opcion elegida
     (printout t crlf "Introduce tu opcion: ")
     (bind ?Id (read))
     (assert (OpcionElegida ?Id))
     (retract ?menu)
+)
+
+
+;;; Cuando salimos del programa, se actualiza la cartera
+(defrule ActualizaCabeceraCartera
+    (OpcionElegida c)
+    (SaldoDisponible (Invertible ?Invertible))
+    =>
+    (open "../data/Cartera.txt" writeCartera "w")
+    (printout writeCartera "DISPONIBLE" " " ?Invertible " " ?Invertible)
+    (assert (SeguirActualizandoCartera))
+)
+
+
+(defrule ActualizaValoresCartera
+    (SeguirActualizandoCartera)
+    (ValorCartera (Nombre ?Empresa) (Acciones ?NumAcciones))
+    (ValorSociedad (Nombre ?Empresa) (Precio ?PrecioAccion))
+    =>
+    (bind ?ValorAcciones (* ?NumAcciones ?PrecioAccion))
+    (printout writeCartera crlf ?Empresa " " ?NumAcciones " " ?ValorAcciones)
+)
+
+;;; Cerramos el fichero de cartera
+(defrule CierraCartera
+    (declare (salience -1000))
+    (SeguirActualizandoCartera)
+    =>
+    (close writeCartera)
 )
 
 

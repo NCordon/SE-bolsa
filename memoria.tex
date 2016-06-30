@@ -345,6 +345,7 @@ Cuestiones planteadas al experto:
  \item ¿Cuándo se invierte en acciones? ¿Cuánto dinero invertimos cuando lo hacemos?
  \item ¿Cuándo se venden acciones?
  \item ¿Cuántas propuestas debemos ofrecer? ¿En base a qué ordenamos las propuestas?
+ \item ¿Cuál es el orden general en que debe realizarse todo el proceso?
 \end{itemize} 
 
 La información educida ha sido:
@@ -365,11 +366,92 @@ La información educida ha sido:
  empresa por las de otra.
  \item Asimismo, el experto también ha proporcionado una explicación de por qué se realiza cada acción.
  \item Se ofrecen las 5 propuestas cuyo RE sea mayor, y se lleva a cabo una. Después el sistema volverá a ofrecer nuevas propuestas.
+ \item El orden en que debe efectuarse el proceso es: lectura de datos, después cálculo de valores peligrosos, tras ello, cálculo de valores sobrevalorados
+ e infravalorados a la vez, después cálculo de propuestas y por último ofrecimiento de propuestas, realimentándose estas dos
+ últimas etapas.
 \end{enumerate}
 
 
 \subsection{Procedimiento de validación y verificación}
 
+Además de los casos de uso típicos del funcionamiento de cada uno de los módulos, tales como:
+\begin{itemize}
+ \item La lectura de valores, sectores y noticias se realiza de forma comedida.
+ \item Los valores inestables se marcan adecuadamente.
+ \item Los valores peligrosos se marcan adecuadamente.
+ \item Los valores sobrevalorados e infravalorados se marcan adecuadamente.
+ \item Las propuestas se calculan conforme a lo descrito.
+ \item Se efectúa lo pedido para cada una de los tipos de propuestas.
+ \item El menú y el cálculo de propuestas se retroalimentan correctamente.
+ \item \ldots
+\end{itemize}
+
+cuya corrección se ha comprobado mediante la ejecución de pruebas y visualización de los hechos generados en la base de
+conocimiento de Clips, mediante la orden \texttt{(facts)}.
+
+se ha hecho énfasis en que las conclusiones obtenidas en cada módulo, especialmente en el último, hayan sido correctas. Asimismo,
+se ha buscado que el sistema sea lo más comprensible posible, a lo que ha colaborado la separación en módulos-archivos hecha, y
+que la lógica de ordenación del disparado de reglas sea lo más simple posible.
+
+El SE presenta medios de de explicación, pues cada opción ofertada se fundamenta, cubre el funcionamiento básico que se pedía
+y permite añadir nuevo conocimiento de manera sencilla (basta actualizar la cartera y/o los datos de empresas y sectores).
+
+En cuanto a la verificación, se ha comprobado que el sistema era preciso (revisando la sintaxis de programación de la lógica
+de la base de datos), y consistente. En lo referente a la consistencia, se encontraron inconsistencias de tipo lógica en la
+deducción de valores peligrosos, puesto que el experto aportó como regla que si un valores estaba perdiendo durante los
+tres últimos días, se marcaba como peligroso. Y si estaba perdiendo durante los 5 últimos días, y además cumplía otra condición
+añadida respecto a su sector, también. Pero existía redundancia, puesto que si estaba perdiendo durante los 5 últimos días,
+también lo estaría haciendo durante los 3 últimos días. Se eliminó la segunda casuística dejándola comentada en base de datos.
+
+\subsection{Descripción del sistema desarrollado}
+\subsubsection{Variables de entrada}
+Los ficheros existentes en la carpeta \texttt{data} constituyen la entrada de datos al problema:
+
+\begin{itemize}
+ \item \texttt{Analisis.txt}: datos de acciones de empresas del Ibex35. Contiene por este orden, las siguientes columnas:
+ nombre de la empresa, precio acción, variación, capitalización, per, rpd, tamaño, \% del Ibex35, per nominal(alto, bajo, medio), rpd nominal,
+ sector, variación respecto a 5 días, perdiendo3(si la empresa encadena 3 días de pérdidas), perdiendo5 (si la empresa encadena
+ 5 días de pérdidas), variación respecto al sector a 5 días, variación respecto al sector a 5 días es menor que -5, variación
+ mensual, variación trimestral, variación semestral, variación anual.
+ \item \texttt{AnalisisSectores.txt}: datos de sectores del Ibex35. Contiene por este orden, las siguientes columnas:
+ nombre del sector, variación, capitalización, per, rpd, \% del Ibex35, perdiendo3, perdiendo5, variación mensual, variación
+ trimestral, variación semestral, variación anual.
+ \item \texttt{Cartera.txt}: listado de acciones de empresas con su valor.
+  La primera línea del fichero tiene el formato:
+  \begin{minted}{bash}
+    DISPONIBLE XXXX XXXX
+  \end{minted}
+  
+  donde \texttt{XXXX} representa el saldo disponible.
+  Las líneas que suceden a ésta tienen el formato:
+  
+  \begin{minted}{bash}
+    ABERTIS_INFR XXXX YYYYY
+  \end{minted}
+
+  donde \texttt{XXXX} representa el número de acciones que tenemos de la compañía cuyo nombre encabeza la línea
+  y \texttt{YYYY} el valor anterior de esas acciones.
+  
+ \item \texttt{Noticias.txt}: Las líneas del fichero tienen el formato:
+  
+  \begin{minted}{bash}
+    B.POPULAR Mala 1
+  \end{minted} 
+ 
+  donde para la empresa \texttt{B.POPULAR} estamos asegurando que existe una mala noticia con fecha de antig\"uedad 1.
+  
+  Las antig\"uedades de este fichero habría que actualizarlas a mano, aunque podría automatizarse dicho proceso mediante un
+  script que se ejecutara de madrugada, al igual que para recoger los datos de la bolsa.
+\end{itemize}
+
+\texttt{bin/main.clp} contiene en un \texttt{deffacts} de nombre \texttt{Entrada} un hecho \texttt{(PrecioDinero 0)}
+que contiene el precio del dinero declarado por el BCE. Este valor hay que actualizarlo a mano.
+
+\subsubsection{Variables de salida}
+La variable de salida la constituye el fichero \texttt{data/Cartera.txt}, que se sobreescribe con la salida del programa, cuando
+en el menú pulsamos la opción correspondiente (c).
+
+\subsubsection{Conocimiento global del sistema}
 
 \subsection{Manual de uso}
 
