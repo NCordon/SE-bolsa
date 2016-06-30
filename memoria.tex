@@ -204,7 +204,7 @@ La obtención de los datos de la bolsa puede hacerse ejecutando:
  ./scrapeo.py
 \end{minted}
 
-disponible en la carpeta \texttt{bin}.
+disponible en la carpeta \texttt{bin}. Probado su funcionamiento a 30/06/2016. Su ejecución tarda un minuto aproximadamente.
 
 Este archivo se conecta a varias web de interés económico con información disponible sobre la bolsa 
 (\href{http://www.bolsamadrid.es}{Bolsa de Madrid}, \href{http://www.eleconomista.es}{El Economista},
@@ -241,9 +241,9 @@ El sistema carga, por este orden los siguientes módulos, a través del arvhivo 
 
   \item \textbf{Módulo de cálculo de valores peligrosos}
   
-  \item \textbf{Módulo de cálculo de valores sobrevalorados}
+  \item \textbf{Módulo de cálculo de valores sobrevalorados e infravalorados}
   
-  \item \textbf{Módulo de cálculo de propuestas}: declara todos los hechos en base de datos correspondientes a cálculo de
+  \item \textbf{Módulo de cálculo de propuestas}: declara todos los hechos correspondientes a cálculo de
   propuestas posibles sobre valores en cartera (para vender), o valores que podrían adquirirse o intercambiarse por alguno en cartera.
   
   \item \textbf{Módulo menú}: muestra al usuario las 5 mejores propuestas con su rendimiento esperado y despliega un menú 
@@ -266,7 +266,7 @@ Se realiza una entrevista abierta al experto en la que se le plantean cuestiones
 ¿qué entradas espera obtener?, ¿qué salidas espera obtener?, ¿de dónde se obtienen los valores necesarios para el sistema?,
 ¿cuál es el esquema general de funcionamiento del sistema?.
 
-La información recopilada ha sido que buscamos un sistema que permita realizar simulaciones a partir de inversiones en bolsa,
+La información recopilada ha sido que buscamos un sistema experto que permita realizar simulaciones a partir de inversiones en bolsa,
 al que se le proporciona una cartera de valores que poseemos, y que debe aportar a la salida dicha cartera modificada. 
 Los datos es preciso obtenerlos del Ibex35 de forma gratuita, es decir, que no podemos pagar por la información que obtengamos.
 El sistema debe aportar la información suficiente para que un aprendiz pueda extraer conocimiento sobre la bondad de las acciones
@@ -286,8 +286,8 @@ se plantean entrevistas estructuradas.
  \item ¿Puede un valor inestable dejar de serlo? ¿En qué casos? ¿Puede poner un ejemplo?
 \end{itemize}
 
-La información educida, a grandes rasgos en esta y posteriores sesiones sobre los valores que necesitam, ha sido la listada a continuación: 
-Una empresa se considera inestable por defecto si pertenece al sector de la construcción. Los valores del sector servicios
+La información educida, a grandes rasgos en esta y posteriores sesiones ha sido la listada a continuación: 
+una empresa se considera inestable por defecto si pertenece al sector de la construcción. Los valores del sector servicios
 se consideran inestables si la economía está bajando. Si un valor tiene una noticia negativa, se considera inestable durante 2 días.
 Si tenemos una noticia negativa sobre un sector, todos los valores de ese sector pasan a ser inestables durante dos días.
 Si hay una noticia negativa sobre la economía en general, todos los valores pasan a ser inestables.
@@ -356,13 +356,13 @@ La información educida ha sido:
  \item Se ofrecen propuestas conforme a un cálculo de rendimiento esperado. En el caso anterior por ejemplo, el rendimiento
  esperado era 20-rpd.
  \item Asimismo, también se venden acciones de empresas sobrevaloradas, cuyo rendimiento por año (cuyo concepto
- le es cuestionado, y responde que el rendimiento por año y nos contesta que se trata del rendimiento por dividendos más la
+ le es cuestionado, y responde que se trata del rendimiento por dividendos más la
  variación anual) es menor que 5 más el precio del dinero (el declarado por el BCE).
  \item El rendimiento esperado en el caso anterior sería $$-RPD + 100 \frac{PER - PER\_SECTOR}{5*PER}$$
  \item Se efectúan compras cuando una empresa está infravalorada y el usuario tiene dinero para invertir. El rendimiento esperado
- es $$RPD + 100 \frac{PER\_SECTOR - PER}{5*PER}$$. Se invierte solo la mitad del dinero.
+ es $$RPD + 100 \frac{PER\_SECTOR - PER}{5*PER}$$ Se invierte solo la mitad del dinero.
  \item También se efectúan compras cuando tengo una empresa en mi cartera no infravalorada y otra que no está sobrevalorada
- y cuyo RPD es mayor que el rendimiento por año + RPD + 1 de la empresa de mi cartera, entonces se cambian las acciones de una
+ y cuyo RPD es mayor que el rendimiento por año + RPD + 1 de la empresa de mi cartera; entonces se cambian las acciones de una
  empresa por las de otra.
  \item Asimismo, el experto también ha proporcionado una explicación de por qué se realiza cada acción.
  \item Se ofrecen las 5 propuestas cuyo RE sea mayor, y se lleva a cabo una. Después el sistema volverá a ofrecer nuevas propuestas.
@@ -383,13 +383,14 @@ Además de los casos de uso típicos del funcionamiento de cada uno de los módu
  \item Las propuestas se calculan conforme a lo descrito.
  \item Se efectúa lo pedido para cada una de los tipos de propuestas.
  \item El menú y el cálculo de propuestas se retroalimentan correctamente.
+ \item Las propuestas que se imprimen son efectivamente las 5 con RE más alto.
  \item \ldots
 \end{itemize}
 
 cuya corrección se ha comprobado mediante la ejecución de pruebas y visualización de los hechos generados en la base de
 conocimiento de Clips, mediante la orden \texttt{(facts)}.
 
-se ha hecho énfasis en que las conclusiones obtenidas en cada módulo, especialmente en el último, hayan sido correctas. Asimismo,
+Se ha hecho énfasis en que las conclusiones obtenidas en cada módulo, especialmente en el último, hayan sido correctas. Asimismo,
 se ha buscado que el sistema sea lo más comprensible posible, a lo que ha colaborado la separación en módulos-archivos hecha, y
 que la lógica de ordenación del disparado de reglas sea lo más simple posible.
 
@@ -397,14 +398,11 @@ El SE presenta medios de de explicación, pues cada opción ofertada se fundamen
 y permite añadir nuevo conocimiento de manera sencilla (basta actualizar la cartera y/o los datos de empresas y sectores).
 
 En cuanto a la verificación, se ha comprobado que el sistema era preciso (revisando la sintaxis de programación de la lógica
-de la base de datos), y consistente. En lo referente a la consistencia, se encontraron inconsistencias de tipo lógica en la
-deducción de valores peligrosos, puesto que el experto aportó como regla que si un valores estaba perdiendo durante los
-tres últimos días, se marcaba como peligroso. Y si estaba perdiendo durante los 5 últimos días, y además cumplía otra condición
-añadida respecto a su sector, también. Pero existía redundancia, puesto que si estaba perdiendo durante los 5 últimos días,
-también lo estaría haciendo durante los 3 últimos días. Se eliminó la segunda casuística dejándola comentada en base de datos.
+de la base de datos, tras la cual se ha hallado un error por el que se calculaban rendimientos esperados dividiendo a veces
+por un PER que puede ser 0, por lo que esta casuística se ha suprimido), y consistente.
 
-\subsection{Descripción del sistema desarrollado}
-\subsubsection{Variables de entrada}
+\section{Descripción del sistema desarrollado}
+\subsection{Variables de entrada}
 Los ficheros existentes en la carpeta \texttt{data} constituyen la entrada de datos al problema:
 
 \begin{itemize}
@@ -444,31 +442,347 @@ Los ficheros existentes en la carpeta \texttt{data} constituyen la entrada de da
   script que se ejecutara de madrugada, al igual que para recoger los datos de la bolsa.
 \end{itemize}
 
-\texttt{bin/main.clp} contiene en un \texttt{deffacts} de nombre \texttt{Entrada} un hecho \texttt{(PrecioDinero 0)}
-que contiene el precio del dinero declarado por el BCE. Este valor hay que actualizarlo a mano.
-
-\subsubsection{Variables de salida}
+\subsection{Variables de salida}
 La variable de salida la constituye el fichero \texttt{data/Cartera.txt}, que se sobreescribe con la salida del programa, cuando
 en el menú pulsamos la opción correspondiente (c).
 
-\subsubsection{Conocimiento global del sistema}
+\subsection{Conocimiento global del sistema}
+Inicialmente se carga, para cada línea del fichero \texttt{data/Analisis.txt} un hecho de la forma:
 
-\subsection{Manual de uso}
+\begin{minted}{bash}
+ (ValorSociedad (Nombre ACCIONA) (Precio 62.38) (Variacion 3.04) 
+		(Capitalizacion 3571851.0) (Per 19.53) (Rpd 3.97) 
+		(Tamanio PEQUENIA) (PorcentajeIbex 0.744719346884579) 
+		(EtiquetaPer Alto) (EtiquetaRpd Medio) (Sector Construccion) 
+		(VarPrecio5 nil) (Perdiendo3 false) (Perdiendo5 false) 
+		(VarSector5 -0.438571428571429) (VarSectorLower-5 false)
+		(VarSemana -7.65) (VarMes -8.0) (VarTrimestre -9.27) 
+		(VarSemestre -20.94) (VarAnio -8.93))
+\end{minted}
 
-El archivo \texttt{bin/scrapeo.py} se debería programar con \texttt{cron} o \texttt{crontab}
+Para cada línea del fichero \texttt{data/AnalisisSectores.txt} un hecho de la forma:
+\begin{minted}{bash}
+(ValorSector (Nombre Servicios) (Variacion 3.704) (Capitalizacion 45438973.0) 
+	     (Per 14.002) (Rpd 4.628) (Tamanio 9.47387847244076) 
+	     (VarSemana -12.058) (Perdiendo3 true) (Perdiendo5 false) 
+	     (VarMes -16.58) (VarTrimestre -9.8) (VarSemestre -11.374) 
+	     (VarAnio -14.366))
+\end{minted}
+
+Para cada línea del fichero \texttt{data/Noticias.txt} un hecho de la forma:
+\begin{minted}{bash}
+(Noticia (Nombre B.POPULAR) (Calificacion Mala) (Antiguedad 1))
+\end{minted}
+
+Para cada línea del fichero \texttt{data/Cartera.txt} un hecho de la forma:
+\begin{minted}{bash}
+(ValorCartera (Nombre BBVA) (Acciones 7200))
+\end{minted}
+
+
+Además \texttt{bin/main.clp} contiene en un \texttt{deffacts} de nombre \texttt{Entrada} un hecho \texttt{(PrecioDinero 0)}
+que contiene el precio del dinero declarado por el BCE. Este valor hay que actualizarlo a mano.
+
+\subsection{Módulos desarrollados}
+
+\begin{itemize}
+ \item \textbf{templates.clp}: contiene especificación de las estructuras de datos necesarias para la práctica.
+ 
+ \item \textbf{lectura.clp}: lee los ficheros de acciones, sectores, cartera y noticias generando el conocimiento inicial sobre
+ estos ficheros. Además, hace una deducción de los valores inestables, usando para el ello el conocimiento general adquirido
+ en la lectura de ficheros. Su objetivo es la lectura de datos y el cálculo de datos deducidos.
+ 
+ \item \textbf{peligrosos.clp}: usa el conocimiento sobre la cartera y las acciones, para deducir qué valores son peligrosos.
+ Su objetivo es el cálculo de valores peligrosos.
+ 
+ \item \textbf{sobrevalorados.clp}: usa el conocimiento sobre las acciones (tamaño de empresas, nivel de per y de rpd para
+ deducir qué valores son sobrevalorados. Su objetivo es el cálculo de valores sobrevalorados.
+ 
+ \item \textbf{infravalorados.clp}: usa el conocimiento sobre las acciones (nivel de per, nivel de rpd, variación trimestral,
+ semestral y anual, variación mensual y variación respecto al sector a 5 días) para deducir los valores infravalorados.
+ Su objetivo es la deducción de valores infravalorados.
+ 
+ \item \textbf{propuestas.clp}: usa un flag \texttt{(GestionPropuestas)} para lanzar las reglas. Este flag se elimina al salir
+ de este módulo, y se vuelve a generar al terminar de procesar una opción de menú correcta. En este módulo además, cuyo objetivo
+ es calcular las posibles propuestas que se harán al usuario, usa el conocimiento sobre las acciones(variación mensual, rpd,per
+ sector, variación anual), los valores de cartera,
+ los valores peligrosos, los valores de sectores (variación del sector respecto al día anterior, per), la cantidad que podemos 
+ invertir (cabecera del fichero \texttt{Cartera.txt}) y el precio del dinero para generar los hechos referentes a las propuestas,
+ que incluyen tipo de propuesta (\texttt{MayorRentabilidad}, \texttt{VentaPeligrosos}, \texttt{CompraInfravalorados}, 
+ \texttt{VentaSobrevalorados}) la empresa o empresas a que hace referencia, el rendimiento esperado de la propuesta y un texto
+ explicativo. Activa el lanzamiento del menú al finalizar la ejecución del módulo.
+ 
+ \item \textbf{menu.clp}: usa el conocimiento adquirido sobre las propuestas para que el usuario escoja una opción plausible.
+ Una vez llevado a cabo el procesamiento de la propuesta elegida, se lanza de nuevo el módulo de cálculo de propuestas, borrando
+ todas las propuestas que ya teníamos (por si alguna ha dejado de ser válida, por ejemplo, referente a algún valor que ya no está).
+\end{itemize}
+
+\subsection{Esquema de razonamiento de la práctica}
+Se ejecutan los módulos con la siguiente ordenación:
+
+\begin{enumerate}
+ \item Módulo de lectura
+ \item Módulo de cálculo de peligrosos.
+ \item Módulo de cálculo de infravaloradas y módulo de cálculo de sobrevaloradas.
+ \item Módulo de cálculo de propuestas. \label{propuestas}
+ \item Módulo de menú. Tras este módulo, volvemos a \ref{propuestas} si hemos escogido llevar a cabo una opción propuesta
+ en el menú.
+\end{enumerate}
+
+
+El mecanismo para ejecutar los módulos en orden es un hecho con prioridad lo más baja posible que va aumentando un contador
+de un hecho de la forma \texttt{(Trigger número)}
+
+\subsection{Lista de hechos del sistema}
+
+En \texttt{main.clp} (archivo principal), cargamos el hecho inicial referente al precio del dinero \texttt{(PrecioDinero 0)}
+y el hecho que hace de flag al módulo de cálculo de propuestas \texttt{(GestionPropuestas)}. 
+
+Asimismo también tenemos una regla de nombre \texttt{NextModulo}, con prioridad mínima, que va generando un hecho \texttt{(Trigger num)}
+con \texttt{num<10}, para cargar cada uno de los módulos. A este efecto, también tenemos una serie de reglas \texttt{LoadTemplates},
+\texttt{LoadMódulo0}, \texttt{LoadMódulo1}, \texttt{LoadMódulo2}, \texttt{LoadMódulo3}, \texttt{LoadMódulo4}, \texttt{LoadMódulo5} para
+cargar respectivamente: 
+
+\begin{itemize}
+\item \texttt{templates.clp}
+\item \texttt{lectura.clp}
+\item \texttt{peligrosos.clp}
+\item \texttt{sobrevalorados.clp},
+\item \texttt{infravalorados.clp}
+\item \texttt{propuestas.clp}
+\item \texttt{menu.clp}
+\end{itemize}
+
+A continuación desglosamos la lista de reglas y de hechos que usamos dentro las reglas en cada módulo:
+
+\begin{itemize}
+ \item \textbf{lectura.clp}:
+ \begin{itemize}
+  \item \textbf{OpenAcciones}
+  
+  Abre el fichero de acciones y genera un hecho \texttt{SeguirLeyendoAcciones} para continuar con la ejecución de la lectura
+  en \textbf{ReadValorSociedad}
+  
+  \item \textbf{ReadValorSociedad}
+  
+  Genera un hecho \texttt{ValorSociedad} por cada valor de acción que nos encontremos en el fichero \texttt{Analisis.txt}
+  para lo que usamos un template:
+  \begin{minted}{bash}
+  (deftemplate ValorSociedad
+    (field Nombre)
+    (field Precio)
+    (field Variacion)
+    (field Capitalizacion)
+    (field Per)
+    (field Rpd)
+    (field Tamanio)
+    (field PorcentajeIbex)
+    (field EtiquetaPer)
+    (field EtiquetaRpd)
+    (field Sector)
+    (field VarPrecio5)
+    (field Perdiendo3)
+    (field Perdiendo5)
+    (field VarSector5)
+    (field VarSectorLower-5)
+    (field VarSemana)
+    (field VarMes)
+    (field VarTrimestre)
+    (field VarSemestre)
+    (field VarAnio)
+  )
+  \end{minted}
+  
+  \item \textbf{OpenSectores} Funciona de manera análoga a \textbf{OpenAcciones}, usando un hecho \texttt{SeguirLeyendoSectores}
+  para lanzar \textbf{ReadValorSectores} y el siguiente template para representar la información de los sectores:
+  \begin{minted}{bash}
+  (deftemplate ValorSector
+    (field Nombre)
+    (field Variacion)
+    (field Capitalizacion)
+    (field Per)
+    (field Rpd)
+    (field Tamanio)
+    (field VarSemana)
+    (field Perdiendo3)
+    (field Perdiendo5)
+    (field VarMes)
+    (field VarTrimestre)
+    (field VarSemestre)
+    (field VarAnio)
+  )
+  \end{minted}
+
+  \item \textbf{OpenNoticias} y \textbf{ReadNoticias} funcionan de manera análoga con un template:
+  \begin{minted}{bash}
+  (deftemplate Noticia
+    (field Nombre)
+    (field Calificacion)
+    (field Antiguedad)
+  )
+  \end{minted}
+
+  \item \textbf{OpenCartera} funciona de manera análoga, con la excepción de que primero necesitamos leer la cabecera de
+  la cartera, mediante una regla \textbf{LeerCabeceraCartera} que genera un hecho de la forma
+  \texttt{(SaldoDisponible (Invertible 9700))}; tras la cual se ejecuta \textbf{ReadCartera}, representando la información
+  sobre la cartera con un template de la forma:
+  
+  \begin{minted}{bash}
+  (deftemplate ValorCartera
+    (field Nombre)
+    (field Acciones)
+  )
+  \end{minted}
+  
+  \item \textbf{VerdadEconomiaBajando}: aserta un hecho de la forma \texttt{(EconomiaBajando)} siempre que la variación del
+  Ibex esa semana haya sido negativa.
+  
+  \item \textbf{MarcaInestablesConstruccion}, \textbf{MarcaInestablesServicios}, \textbf{DesmarcaInestablesNoticias} y \textbf{MarcaInestablesNoticias}: son reglas
+  que generan hechos de la forma \texttt{(ValorInestable (Nombre ABERTIS\_INFR))} o los eliminan.
+
+\end{itemize}
+
+\item \textbf{peligrosos.clp}
+\begin{itemize}
+  \item \textbf{DetectaPeligrososPerdiendo3}: genera hechos de la forma \texttt{(ValorPeligroso (Nombre ABERTIS\_INFR))}
+ para valores inestables que lleven en caída 3 días.
+\end{itemize}
+
+\item \textbf{infravalorados.clp}
+\begin{itemize}
+  \item \textbf{MarcaInfravalorados1}
+  \item \textbf{MarcaInfravalorados2}
+  \item \textbf{MarcaInfravalorados3}
+\end{itemize}
+  Estas tres reglas usan el conocimiento de los valores de la acciones (\texttt{ValorSociedad}), para generar hechos de
+  la forma \texttt{(ValorInfravalorado (Nombre ABERTIS\_INFR))}.
+
+\item \textbf{sobrevalorados.clp}
+\begin{itemize}
+  \item \textbf{MarcaSobreValorados1}
+  \item \textbf{MarcaSobrevalorados2}
+  \item \textbf{MarcaSobreValorados3}
+\end{itemize}
+
+  Estas tres reglas usan el conocimiento de los valores de la acciones (\texttt{ValorSociedad}), para generar hechos de
+  la forma \texttt{(ValorSobreValorado (Nombre ABERTIS\_INFR))}.
+
+  
+\item \textbf{propuestas.clp}
+\begin{itemize}
+  \item \textbf{PropuestasPeligrosos}
+  \item \textbf{PropuestasInfravalorados}
+  \item \textbf{PropuestasSobrevalorados}
+  \item \textbf{PropuestasMayorRentabilidad}
+  \item \textbf{MuestraPropuestas}: regla con mínima prioridad dentro de este módulo que al dispararse borra el flag de
+    \texttt{(GestionPropuestas)} y genera el hecho de \texttt{(ImprimeMenu)} y el hecho \texttt{(PropuestasImpresas 0)}, que
+    va a representar un conteo de las propuestas que ya se han impreso en el módulo del Menú.
+\end{itemize}
+
+Todas las reglas de este módulo necesitan del hecho \texttt{(GestionPropuestas)} para poder dispararse. Todas las reglas de
+este módulo generan hechos siguiendo el template:
+
+\begin{minted}{bash}
+(deftemplate Propuesta
+    (field Tipo
+        (type SYMBOL)
+        (allowed-values
+            VentaPeligrosos
+            CompraInfravalorados
+            VentaSobrevalorados
+            MayorRentabilidad
+        )
+    )
+    (multifield Empresa (type SYMBOL) (cardinality 1 2))
+    (field RE)
+    (field Info)
+)
+\end{minted}
+
+Si la propuesta es de tipo \texttt{MayorRentabilidad}, en \texttt{Empresa}, la primera empresa que aparezca será la de nuestra
+cartera, y la segunda aquella cuyas acciones queremos comprar. \texttt{Info} representa el texto explicativo de la propuesta.
+
+
+\item \textbf{menu.clp}
+\begin{itemize}
+\item \textbf{ImprimeMejoresOpciones}: esta regla imprime las 5 mejores propuestas, llevando un conteo mediante el hecho
+\texttt{(PropuestasImpresas número)} y aumenta número en una unidad mientras sea menor que 5.
+
+Asimismo, para cada propuesta impresa aserta un hecho siguiendo el template:
+\begin{minted}{bash}
+ (deftemplate PropuestaImpresa
+    (field Tipo
+        (type SYMBOL)
+        (allowed-values
+            VentaPeligrosos
+            CompraInfravalorados
+            VentaSobrevalorados
+            MayorRentabilidad
+        )
+    )
+    (multifield Empresa (type SYMBOL) (cardinality 1 2))
+    (field NumPropuesta)
+)
+\end{minted}
+
+\item \textbf{ImprimeSaldo} y \textbf{ImprimeCartera} son dos reglas que hacen salida por pantalla al usuario del estado
+de su cartera.
+
+\item \textbf{Menu}: última de las reglas de impresión en ejecutarse. Muestra un texto por pantalla indicando las opciones
+que se pueden elegir, y necesita, al igual que las otras reglas de impresión del hecho \texttt{ImprimeMenu}; esta regla,
+además, borra dicho hecho y genera un hecho \texttt{(OpcionElegida x)} con la opción elegida, donde \texttt{x} corresponderá
+al slot \texttt{NumPropuesta} de la opción escogida en caso de ser esta correcta.
+
+\item \textbf{ActualizaCabeceraCartera}, \textbf{ActualizaValoresCartera} y \textbf{CierraCartera} son tres reglas que se
+disparan en este orden en caso de que la opción escogida haya sido la c, y que escriben el estado de la cartera al fichero
+\texttt{Cartera.txt} para futuras sesiones.
+
+\item \textbf{ProcesaVentaPeligroso}: vende el valor peligroso indicado en la propuesta y suma al \texttt{SaldoDisponible}
+el valor obtenido por la venta de sus acciones, borrando el hecho correspondiente de la cartera. El hecho \texttt{OpcionProcesada}
+se aserta al finalizar
+
+\item \textbf{ProcesaVentaSobrevalorado}: vende el valor sobrevalorado indicado en la propuesta y suma al \texttt{SaldoDisponible}
+el valor obtenido por la venta de sus acciones, borrando el hecho correspondiente de la cartera. El hecho \texttt{OpcionProcesada} 
+se aserta al finalizar.
+
+\item \textbf{ProcesaCompraInfravalorado}: invierta la mitad del saldo disponible en acciones de la empresa infravalorada
+indicada. Aserta el hecho \texttt{OpcionProcesada} al finalizar.
+
+\item \textbf{ProcesaMayorRentabilidad}: cambia el valor en acciones de una empresa de cartera por las de la empresa indicada
+por la propuesta (que puede o no estar en cartera, lo que da lugar a situaciones de repetición que solucionamos mediante
+\textbf{UnificaCartera} que unifica dos hechos en cartera de la misma empresa en uno solo). Si sobra dinero de la adquisión
+de las acciones de otra empresa, se le suma al \texttt{SaldoDisponible}. Aserta el hecho \texttt{OpcionProcesada} 
+al finalizar.
+
+\item \textbf{LimpiaImpresas}: borra todas las propuestas impresas, siempre que ya se haya procesado la acción.
+
+\item \textbf{LimpiaPropuestas}: borra todas las propuestas, siempre que ya se haya procesado una acción.
+
+\item \textbf{ReiniciaCalculoPropuestas}: aserta el hecho \texttt{(GestionPropuestas)} para que vuelva a lanzarse el cálculo de
+propuestas, y borra los hechos \texttt{(OpcionElegida x)}, \texttt{(OpcionProcesada)} y \texttt{(PropuestasImpresas x)}.
+
+\end{itemize}
+
+\end{itemize}
+
+
+
+\section{Manual de uso}
+
+El archivo \texttt{bin/scrapeo.py} se debería programar con \texttt{cron} o \texttt{crontab} en sistemas UNIX
 para ejecutarse diariamente de madrugada, y que actualizara los datos de la bolsa. En Windows se podría programar su ejecución 
 con el programador de tareas del sistema.
 
 Para ejecutar el SE, basta hacer la siguiente sucesión de órdenes(en sistemas UNIX, y situado dentro del directorio \texttt{clp}):
 
-\end{document}
 \begin{minted}{bash}
- clips
- (load main.clp)
- (reset)
- (run)
+ $bash clips
+    -> (load main.clp)
+    -> (reset)
+    -> (run)
 \end{minted}
 
 El menú ofrecerá al usuario opciones, habiéndose imprimido éstas y la cartera con anterioridad. Basta pulsar una opción correcta
-(1,2,3,4, o 5) para observar sus resultados. En caso de querer parar la ejecución del sitema, basta introducir una opción
-distinta de estas 5.
+(1,2,3,4, o 5) para observar sus resultados. En caso de querer parar la ejecución del sistema, basta introducir una opción
+distinta de estas cinco..
+\end{document}

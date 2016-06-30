@@ -146,7 +146,7 @@
     )
 
     (ValorSociedad
-        (Nombre ?Empresa2)
+        (Nombre ?Empresa2 & ~?Empresa1)
         (Per ?PerEmpresa2)
         (Rpd ?Rpd2)
         (VarAnio ?VarAnio2)

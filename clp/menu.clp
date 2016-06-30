@@ -1,5 +1,4 @@
-
-
+;;; Imprime las 5 mejores propuestas
 (defrule ImprimeMejoresOpciones
     (ImprimeMenu)
 
@@ -15,6 +14,7 @@
         (Empresa $?Empresa)
     ))
 
+    ;;; No existe una propuesta con mayor RE
     (not (and (Propuesta (Tipo ?Tipo2) (Empresa $?Empresa2) (RE ?RE2&:(> ?RE2 ?RE)))
          (not (PropuestaImpresa (Tipo ?Tipo2) (Empresa $?Empresa2)))))
 
@@ -81,7 +81,7 @@
 )
 
 
-;;; Cuando salimos del programa, se actualiza la cartera
+;;; Cuando escogemos la opción correspondiente, se actualiza la cartera
 (defrule ActualizaCabeceraCartera
     (OpcionElegida c)
     (SaldoDisponible (Invertible ?Invertible))
@@ -110,6 +110,7 @@
 )
 
 
+;;; Venta de valores peligrosos
 (defrule ProcesaVentaPeligroso
     (OpcionElegida ?Id)
     (not (OpcionProcesada))
@@ -118,12 +119,6 @@
         (Tipo VentaPeligrosos)
         (Empresa ?Empresa)
         (NumPropuesta ?Id))
-
-    (Propuesta
-        (Tipo VentaPeligrosos)
-        (Empresa ?Empresa)
-        (RE ?RE)
-        (Info ?Info))
 
     ?Cartera <- (ValorCartera
         (Nombre ?Empresa)
@@ -140,8 +135,8 @@
 )
 
 
-
-(defrule ProcesaVentaSobrevalorados
+;;; Venta de valores sobrevalorado
+(defrule ProcesaVentaSobrevalorado
     (OpcionElegida ?Id)
     (not (OpcionProcesada))
 
@@ -149,12 +144,6 @@
         (Tipo VentaSobrevalorados)
         (Empresa ?Empresa)
         (NumPropuesta ?Id))
-
-    (Propuesta
-        (Tipo VentaSobrevalorados)
-        (Empresa ?Empresa)
-        (RE ?RE)
-        (Info ?Info))
 
     ?Cartera <- (ValorCartera
         (Nombre ?Empresa)
@@ -172,7 +161,7 @@
 
 
 ;;; Regla para comprar valores infravalorados cuando están en cartera
-(defrule ProcesaCompraInfravalorados
+(defrule ProcesaCompraInfravalorado
     (OpcionElegida ?Id)
     (not (OpcionProcesada))
 
@@ -180,12 +169,6 @@
         (Tipo CompraInfravalorados)
         (Empresa ?Empresa)
         (NumPropuesta ?Id))
-
-    (Propuesta
-        (Tipo CompraInfravalorados)
-        (Empresa ?Empresa)
-        (RE ?RE)
-        (Info ?Info))
 
     ?Saldo <- (SaldoDisponible (Invertible ?Invertible))
 
@@ -213,12 +196,6 @@
         (Tipo MayorRentabilidad)
         (Empresa ?EmpresaActual ?EmpresaNueva)
         (NumPropuesta ?Id))
-
-    (Propuesta
-        (Tipo MayorRentabilidad)
-        (Empresa ?EmpresaActual ?EmpresaNueva)
-        (RE ?RE)
-        (Info ?Info))
 
 
     ?f <- (ValorCartera
